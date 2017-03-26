@@ -1,0 +1,30 @@
+{
+  "name": "redsand",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gyowanny/redsand.git"
+  },
+  "keywords": [
+    "auth",
+    "token",
+    "user"
+  ],
+  "author": "Gyowanny (Geo)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gyowanny/redsand/issues"
+  },
+  "homepage": "https://github.com/gyowanny/redsand#readme",
+  "dependencies": {
+    "body-parser": "1.17.1",
+    "express": "4.15.2",
+    "jsonwebtoken": "7.3.0",
+    "morgan": "1.8.1"
+  }
+}
