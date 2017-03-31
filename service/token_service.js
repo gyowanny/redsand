@@ -1,4 +1,4 @@
-var jsonwWebToken = require('jsonwebtoken');
+var jsonWebToken = require('jsonwebtoken');
 
 module.exports = {
 
@@ -7,12 +7,10 @@ module.exports = {
             return null;
         }
 
-        return jsonwWebToken.sign(user, key, { expiresIn: expiration});
+        return jsonWebToken.sign(user, key, { expiresIn: expiration});
     },
 
-    validateAndDecode: function(token, key, callback) {
-        jsonwWebToken.verify(token, key, function(err, decoded) {
-            callback(err, decoded);
-        });
+    validateAndDecode: function(token, key) {
+        return jsonWebToken.verify(token, key);
     }
 }

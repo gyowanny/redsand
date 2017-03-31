@@ -24,26 +24,25 @@ apiRoutes.post('/auth', function(req, res) {
 
     var user; //TODO: from database
 
-    passwordService.matches(password, user.password, function(err, match) {
-       if (match == true) {
-           //authenticate and returns the token
-           var token = jwt.sign(user, 'secret_key', {
-               expiresInMinutes: 1440 // expires in 24 hours
-           });
+    var match = passwordService.matches(password, user.password);
+    if (match == true) {
+       //authenticate and returns the token
+       var token = jwt.sign(user, 'secret_key', {
+           expiresInMinutes: 1440 // expires in 24 hours
+       });
 
-           // return the information including token as JSON
-           res.json({
-               success: true,
-               message: 'Enjoy your token!',
-               token: token
-           });
-       } else {
-           res.json({
-               success: false,
-               message: 'Authentication failed'
-           })
-       }
-    });
+       // return the information including token as JSON
+       res.json({
+           success: true,
+           message: 'Enjoy your token!',
+           token: token
+       });
+    } else {
+       res.json({
+           success: false,
+           message: 'Authentication failed'
+       })
+    }
 });
 
 var apiAdminRoutes = express.Router();
