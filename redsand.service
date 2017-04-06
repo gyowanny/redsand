@@ -2,12 +2,8 @@
 Description=Red Sand
 
 [Service]
-ExecStart=nodemon server.js
+ExecStart=/usr/local/bin/node server.js
 Restart=always
-User=nobody
-Group=nobody
-Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production
 WorkingDirectory=/var/local/redsand
 
 [Install]

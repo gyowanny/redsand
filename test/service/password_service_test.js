@@ -7,7 +7,7 @@ var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 var afterEach = require("mocha").afterEach;
 var beforeEach = require("mocha").beforeEach;
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 describe('Password service', function() {
 

@@ -24,7 +24,7 @@
   "homepage": "https://github.com/gyowanny/redsand#readme",
   "dependencies": {
     "async": "2.2.0",
-    "bcrypt": "1.0.2",
+    "bcryptjs": "2.4.3",
     "body-parser": "1.17.1",
     "express": "4.15.2",
     "jsonwebtoken": "7.3.0",
