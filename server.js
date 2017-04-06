@@ -4,8 +4,9 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var jwt = require('jsonwebtoken');
 var passwordService = require('./service/password_service');
-
-var port = process.env.PORT || 7000;
+var config = require('./config.js');
+var dbSetup = require('./data/db');
+var userDao = require('./data/user_dao');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -13,7 +14,7 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 app.get('/', function(req, res){
-    res.send('Hello! This is Red Sand Authentication API.');
+    res.send('Hello! This is Red Sand Authentication API. Nothing to do here');
 });
 
 var apiRoutes = express.Router();
@@ -22,30 +23,35 @@ apiRoutes.post('/auth', function(req, res) {
     var login = req.body.login;
     var password = req.body.password;
 
-    var user; //TODO: from database
+    userDao.findByLogin(login, function(err, user) {
+        var response;
+        if (err || !user) {
+            response = createResponseAsJson(false, 'UNAUTHORIZED');
+        } else {
+            var match = passwordService.matches(password, user.password);
 
-    var match = passwordService.matches(password, user.password);
-    if (match == true) {
-       //authenticate and returns the token
-       var token = jwt.sign(user, 'secret_key', {
-           expiresInMinutes: 1440 // expires in 24 hours
-       });
+            if (match == true) {
+                //authenticate and returns the token
+                var token = jwt.sign(user, 'secret_key', {
+                    expiresIn: "24h" // expires in 24 hours
+                });
 
-       // return the information including token as JSON
-       res.json({
-           success: true,
-           message: 'Enjoy your token!',
-           token: token
-       });
-    } else {
-       res.json({
-           success: false,
-           message: 'Authentication failed'
-       })
-    }
+                // returns the information including token as JSON
+                response = createResponseAsJson(true, 'OK');
+                response.token = token;
+
+            } else {
+                response = createResponseAsJson(false, 'UNAUTHORIZED');
+            }
+        }
+        res.json(response);
+    });
+
 });
 
 var apiAdminRoutes = express.Router();
+
+/*
 apiAdminRoutes.use(function(req, res, next) {
 
     // check header or url parameters or post parameters for token
@@ -76,15 +82,32 @@ apiAdminRoutes.use(function(req, res, next) {
 
     }
 });
+*/
 
+var createResponseAsJson = function(isSuccess, message) {
+    return {
+        success: isSuccess,
+        message: message
+    };
+}
 
 apiAdminRoutes.get('/user/:orgid', function(req, res) {
     //returns the list of all users of the given organization id
 });
 
 apiAdminRoutes.post('/user', function(req, res) {
-    //create a user
+    var user = req.body;
+    user.password = passwordService.encrypt(user.password, config.password.saltRounds);
+    userDao.save(req.body, new function(err, result) {
+       if (err) {
+           console.log(err);
+           res.json(createResponseAsJson(false, 'Can not create user. \n'+err));
+       } else {
+           res.json(createResponseAsJson(true, 'OK'));
+       }
+    });
 });
+
 
 apiAdminRoutes.put('/user', function(req, res) {
     //update a user
@@ -97,5 +120,16 @@ apiAdminRoutes.delete('/user/:id', function(req, res) {
 app.use('/api', apiRoutes);
 app.use('/admin', apiAdminRoutes);
 
-app.listen(port);
-console.log('Server started on port ' + port);
+//App startup
+dbSetup.init(config, function(err, connection) {
+    if(err) {
+        console.error(err);
+        process.exit(1);
+        return;
+    }
+    dbSetup.global.connection = connection;
+    app._rdbCon = connection;
+    app.listen(config.express.port);
+    console.log('Server started on port ' + config.express.port);
+});
+
