@@ -92,22 +92,41 @@ var createResponseAsJson = function(isSuccess, message) {
 }
 
 apiAdminRoutes.get('/user/:orgid', function(req, res) {
-    //returns the list of all users of the given organization id
-});
-
-apiAdminRoutes.post('/user', function(req, res) {
-    var user = req.body;
-    user.password = passwordService.encrypt(user.password, config.password.saltRounds);
-    userDao.save(req.body, new function(err, result) {
+    userDao.findByOrgId(req.params.orgid, function(err, users) {
        if (err) {
            console.log(err);
-           res.json(createResponseAsJson(false, 'Can not create user. \n'+err));
+           res.json(createResponseAsJson(false, 'Can not retrieve the users by organization id \n'+err));
        } else {
-           res.json(createResponseAsJson(true, 'OK'));
+           var response = createResponseAsJson(true, 'OK');
+           response.value = users;
+           res.json(response);
        }
     });
 });
 
+apiAdminRoutes.post('/user', function(req, res) {
+    var user = req.body;
+
+    userDao.loginExists(user.login).then(function(exists) {
+
+        if (exists) {
+            console.log('Login '+user.login+' already exists');
+            res.json(createResponseAsJson(false, 'LOGIN_EXISTS'));
+            return;
+        }
+
+        user.password = passwordService.encrypt(user.password, config.password.saltRounds);
+        userDao.save(user, function(err, result) {
+            if (err) {
+                console.log(err);
+                res.json(createResponseAsJson(false, 'Can not create user. \n'+err));
+            } else {
+                console.log(result);
+                res.json(createResponseAsJson(true, 'CREATED'));
+            }
+        });
+    });
+});
 
 apiAdminRoutes.put('/user', function(req, res) {
     //update a user
@@ -122,6 +141,7 @@ app.use('/admin', apiAdminRoutes);
 
 //App startup
 dbSetup.init(config, function(err, connection) {
+    console.log('App config: \n'+JSON.stringify(config));
     if(err) {
         console.error(err);
         process.exit(1);

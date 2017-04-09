@@ -2,7 +2,7 @@
 Description=Red Sand
 
 [Service]
-ExecStart=/usr/local/bin/node server.js
+ExecStart=/bin/node server.js
 Restart=always
 WorkingDirectory=/var/local/redsand
 
