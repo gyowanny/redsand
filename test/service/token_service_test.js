@@ -14,7 +14,7 @@ var JsonWebTokenError = require('jsonwebtoken/lib/JsonWebTokenError');
 describe('Token service', function() {
 
     var instance;
-    var user = {login: 'login', password: 'password'};
+    var user = {id: 'id', login: 'login', password: 'password', roles: ['role'], org_id: ['org_id']};
     var sandbox;
 
     beforeEach(function () {
@@ -29,7 +29,7 @@ describe('Token service', function() {
         //Given
         var expectedToken = 'signed-token';
         var jsonwWebToken = sandbox.stub(jwt, 'sign')
-            .withArgs(user, 'secret-key', { expiresIn: '1d' }).returns(expectedToken);
+            .withArgs({user: user}, 'secret-key', { expiresIn: '1d' }).returns(expectedToken);
         instance = proxyquire('../../service/token_service', {'jsonwWebToken': jsonwWebToken});
 
         //When
@@ -63,10 +63,11 @@ describe('Token service', function() {
         instance = proxyquire('../../service/token_service', {'jsonWebToken': jsonWebToken});
 
         // When
-        var decodedToken = instance.validateAndDecode('token', 'secret-key');
+        instance.validateAndDecode('token', 'secret-key', function(err, decoded) {
+            // Then
+            expect(decodedToken).to.be.equal(expectedToken);
+        });
 
-        // Then
-        expect(decodedToken).to.be.equal(expectedToken);
     });
 
     it('should return jwt must be provided error on validate and decode if the token is null', function() {

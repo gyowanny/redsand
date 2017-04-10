@@ -10,5 +10,8 @@ module.exports = {
     },
     password: {
         saltRounds: 10
+    },
+    logging: {
+        level: 'debug'
     }
 };

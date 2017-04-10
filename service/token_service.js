@@ -7,10 +7,25 @@ module.exports = {
             return null;
         }
 
-        return jsonWebToken.sign(user, key, { expiresIn: expiration});
+        delete user.id;
+        delete user.password;
+
+        return jsonWebToken.sign({user: user}, key, { expiresIn: expiration});
     },
 
-    validateAndDecode: function(token, key) {
-        return jsonWebToken.verify(token, key);
+    validateAndDecode: function(token, key, callback) {
+        return jsonWebToken.verify(token, key, function(err, decoded) {
+            if (err) {
+                if (err.name === 'TokenExpiredError') {
+                    callback('TOKEN_EXPIRED', decoded);
+                    return;
+                } else {
+                    callback(err, decoded);
+                    return;
+                }
+            }
+
+            callback(null, decoded);
+        });
     }
 }

@@ -9,7 +9,6 @@ module.exports =  {
                 callback(err, 'ERROR');
                 return;
             } else {
-                console.log(result);
                 callback(null, 'CREATED');
             }
         });
@@ -20,8 +19,8 @@ module.exports =  {
            if (err) {
                throw err;
            }
-            console.log('count login: '+count);
-            return count > 0;
+
+           return Boolean(count > 0);
         });
     },
 
@@ -49,14 +48,18 @@ module.exports =  {
     },
 
     findByOrgId: function(orgId, callback) {
-        r.table('users').filter({org_id: orgId}).run(db.global.connection, function(err, cursor) {
-           if (err) {
-               callback(err, null);
-               return;
-           }
+        r.table('users')
+            .filter(function(user) {
+                    return user('org_id').contains(orgId);
+                })
+            .run(db.global.connection, function(err, cursor) {
+               if (err) {
+                   callback(err, null);
+                   return;
+               }
 
-           cursor.toArray(callback);
-        });
+               cursor.toArray(callback);
+            });
     }
 
 }

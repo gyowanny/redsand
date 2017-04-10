@@ -4,7 +4,6 @@ var expect = chai.expect;
 var describe = require("mocha").describe;
 var it = require("mocha").it;
 var sinon = require('sinon');
-var proxyquire = require('proxyquire');
 var afterEach = require('mocha').afterEach;
 var beforeEach = require('mocha').beforeEach;
 var db = require('../../data/db');
@@ -15,6 +14,17 @@ describe('User Dao', function() {
 
     var instance;
     var sandbox;
+
+    var createDefaultUser = function() {
+        return {
+            login: 'login',
+            password: 'password',
+            email: 'user@user.com',
+            fullName: 'full name',
+            roles: ['ROLE_1','ROLE_2','ROLE_3','ROLE_4'],
+            org_id: ['org_id']
+        };
+    };
 
     beforeEach(function () {
         instance = require('../../data/user_dao');
@@ -31,15 +41,7 @@ describe('User Dao', function() {
 
     it('should save a new user in the database', function (done) {
         // Given
-        var user = {
-            id: 'id',
-            login: 'login',
-            password: 'password',
-            email: 'user@user.com',
-            fullName: 'full name',
-            roles: 'ROLE_1,ROLE_2,ROLE_3,ROLE_4',
-            org_id: 'org_id'
-        };
+        var user = createDefaultUser();
 
         db.init(config, function(err, connection) {
             db.global.connection = connection;
@@ -55,24 +57,12 @@ describe('User Dao', function() {
 
     it('should retrieve all the users associated to a given organization ID', function(done) {
         // Given
-        var user1 = {
-            id: 'id',
-            login: 'login',
-            password: 'password',
-            email: 'user@user.com',
-            fullName: 'full name',
-            roles: 'ROLE_1,ROLE_2,ROLE_3,ROLE_4',
-            org_id: 'org_id'
-        };
-        var user2 = {
-            id: 'id2',
-            login: 'login2',
-            password: 'password',
-            email: 'user2@user2.com',
-            fullName: 'full name 2',
-            roles: 'ROLE_1,ROLE_2,ROLE_3,ROLE_4',
-            org_id: 'another_org_id'
-        };
+        var user1 = createDefaultUser();
+
+        var user2 = createDefaultUser();
+        user2.login = 'login2';
+        user2.org_id = ['another_org_id'];
+
         var orgId = 'org_id';
         var userArray = [user1, user2];
 
@@ -88,7 +78,7 @@ describe('User Dao', function() {
                     expect(err).to.be.null;
                     expect(users).to.be.a('array');
                     expect(users).to.have.lengthOf(1);
-                    expect(users[0].org_id).to.equal(orgId);
+                    expect(users[0].org_id).to.contains(orgId);
 
                     done();
                 });
@@ -97,5 +87,41 @@ describe('User Dao', function() {
         });
     });
 
+    it('should return true when a login already exists', function(done) {
+        var user = createDefaultUser();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(user, function(err, result) {
+                expect(err).to.be.null;
+
+                return instance.loginExists('login').then(function(exists) {
+                    expect(Boolean(exists)).to.be.true;
+                    done();
+                });
+
+            });
+        });
+    });
+
+    it('should return a user found by login', function(done) {
+        var user = createDefaultUser();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(user, function(err, result) {
+                expect(err).to.be.null;
+
+                instance.findByLogin(user.login, function(err, user) {
+                    expect(err).to.be.null;
+                    expect(user).to.not.be.null;
+                    done();
+                });
+
+            });
+        });
+    });
 
 });

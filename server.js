@@ -3,10 +3,16 @@ var app = express();
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var jwt = require('jsonwebtoken');
+var logger = require('winston');
 var passwordService = require('./service/password_service');
 var config = require('./config.js');
 var dbSetup = require('./data/db');
 var userDao = require('./data/user_dao');
+var orgDao = require('./data/org_dao');
+var tokenService = require('./service/token_service');
+var _ = require('lodash');
+
+logger.level = config.logging.level;
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -17,6 +23,8 @@ app.get('/', function(req, res){
     res.send('Hello! This is Red Sand Authentication API. Nothing to do here');
 });
 
+var secretKey = 'secret_key';
+
 var apiRoutes = express.Router();
 
 apiRoutes.post('/auth', function(req, res) {
@@ -24,27 +32,60 @@ apiRoutes.post('/auth', function(req, res) {
     var password = req.body.password;
 
     userDao.findByLogin(login, function(err, user) {
-        var response;
+
         if (err || !user) {
-            response = createResponseAsJson(false, 'UNAUTHORIZED');
+            logger.log('warn', 'login not authorized for user %s', login);
+            res.status(403).json(createResponseAsJson(false, 'UNAUTHORIZED'));
         } else {
+            var response;
             var match = passwordService.matches(password, user.password);
 
             if (match == true) {
-                //authenticate and returns the token
-                var token = jwt.sign(user, 'secret_key', {
-                    expiresIn: "24h" // expires in 24 hours
+                orgDao.findByOrgId(user.org_id, function(err, org) {
+                    var expiry = "24h";
+                    if (org) {
+                        expiry = org.tokenExpiration;
+                    }
+                    //signs and returns the token
+                    var token = tokenService.generate(user, secretKey, expiry);
+
+                    // returns the information including token as JSON
+                    response = createResponseAsJson(true, 'OK');
+                    response.token = token;
+                    res.json(response);
                 });
 
-                // returns the information including token as JSON
-                response = createResponseAsJson(true, 'OK');
-                response.token = token;
-
             } else {
-                response = createResponseAsJson(false, 'UNAUTHORIZED');
+                res.status(403).json(createResponseAsJson(false, 'UNAUTHORIZED'));
             }
         }
-        res.json(response);
+    });
+});
+
+apiRoutes.post('/validate', function(req, res) {
+    var user = req.body.user;
+    var token = req.body.token;
+
+    if (!token) {
+        res.status(403).send('Invalid body');
+        return;
+    }
+
+    tokenService.validateAndDecode(token, secretKey, function(err, decoded) {
+        if (err) {
+            res.status(403).send(err);
+            return;
+        }
+
+        if (user) {
+            if (_.isEqual(decoded.user, user)) {
+                res.status(204).send();
+            } else {
+                res.status(403).send();
+            }
+        } else {
+            res.status(204).send();
+        }
     });
 
 });
@@ -110,7 +151,7 @@ apiAdminRoutes.post('/user', function(req, res) {
     userDao.loginExists(user.login).then(function(exists) {
 
         if (exists) {
-            console.log('Login '+user.login+' already exists');
+            logger.log('warn', 'Can not create user. Login %s already exists', user.login);
             res.json(createResponseAsJson(false, 'LOGIN_EXISTS'));
             return;
         }
@@ -118,10 +159,9 @@ apiAdminRoutes.post('/user', function(req, res) {
         user.password = passwordService.encrypt(user.password, config.password.saltRounds);
         userDao.save(user, function(err, result) {
             if (err) {
-                console.log(err);
+                logger.log('err', err);
                 res.json(createResponseAsJson(false, 'Can not create user. \n'+err));
             } else {
-                console.log(result);
                 res.json(createResponseAsJson(true, 'CREATED'));
             }
         });
@@ -136,17 +176,32 @@ apiAdminRoutes.delete('/user/:id', function(req, res) {
     //deletes a user
 });
 
+apiAdminRoutes.post('/org', function(req, res) {
+    var org = req.body;
+    orgDao.save(org, function(err, result) {
+       if (err) {
+           res.status(500).json(createResponseAsJson(false, 'Can not create org. \n'+err));
+           return;
+       }
+
+       res.json(createResponseAsJson(true, 'CREATED'));
+    });
+});
+
 app.use('/api', apiRoutes);
 app.use('/admin', apiAdminRoutes);
 
 //App startup
 dbSetup.init(config, function(err, connection) {
-    console.log('App config: \n'+JSON.stringify(config));
-    if(err) {
+
+    logger.log('debug', 'App config: %s', JSON.stringify(config));
+
+    if (err) {
         console.error(err);
         process.exit(1);
         return;
     }
+
     dbSetup.global.connection = connection;
     app._rdbCon = connection;
     app.listen(config.express.port);
