@@ -168,24 +168,69 @@ apiAdminRoutes.post('/user', function(req, res) {
     });
 });
 
-apiAdminRoutes.put('/user', function(req, res) {
-    //update a user
+apiAdminRoutes.put('/user/:id', function(req, res) {
+    userDao.findById(req.params.id, function(err, userFound) {
+        if (err) {
+            logger.log('Can not find user by ID [%s] \n %s', req.params.id, err);
+            res.json(createResponseAsJson(false, 'Can not find user by ID. \n'+err));
+            return;
+        }
+
+        var user = req.body;
+        if (!user.id) {
+            user.id = req.params.id;
+        }
+
+        userDao.save(user, function (err, result) {
+            if (err) {
+                logger.log('Can not update user with ID [%s] \n %s', req.params.id, err);
+                res.json(createResponseAsJson(false, 'Can not update user with ID. \n'+err));
+                return;
+            }
+
+            res.json(createResponseAsJson(true, 'UPDATED'));
+        });
+    })
 });
 
 apiAdminRoutes.delete('/user/:id', function(req, res) {
-    //deletes a user
+    //deletes a user by id. Safer than by login
+    userDao.delete(req.params.id, function(err, result) {
+       if (err) {
+           logger.log('err', 'Can not delete user ID %s', req.params.id);
+           res.status(500).json(createResponseAsJson(false, err));
+           return;
+       }
+
+       if (result === 'DELETED') {
+           res.json(createResponseAsJson(true, 'DELETED'));
+       } else {
+           res.json(createResponseAsJson(false, result));
+       }
+    });
 });
 
 apiAdminRoutes.post('/org', function(req, res) {
     var org = req.body;
-    orgDao.save(org, function(err, result) {
-       if (err) {
-           res.status(500).json(createResponseAsJson(false, 'Can not create org. \n'+err));
-           return;
-       }
 
-       res.json(createResponseAsJson(true, 'CREATED'));
+    orgDao.orgIdExists(org.org_id).then(function(exists) {
+
+        if (exists) {
+            logger.log('warn', 'Can not create org. Org ID %s already exists', org.org_id);
+            res.json(createResponseAsJson(false, 'ORG_ID_EXISTS'));
+            return;
+        }
+
+        orgDao.save(org, function(err, result) {
+            if (err) {
+                res.status(500).json(createResponseAsJson(false, 'Can not create org. \n'+err));
+                return;
+            }
+
+            res.json(createResponseAsJson(true, 'CREATED'));
+        });
     });
+
 });
 
 app.use('/api', apiRoutes);

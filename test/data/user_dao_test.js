@@ -124,4 +124,85 @@ describe('User Dao', function() {
         });
     });
 
+    it('should update user when saving if it contains an ID', function(done) {
+        var user = createDefaultUser();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(user, function(err, result) {
+                expect(err).to.be.null;
+
+                instance.findByLogin(user.login, function(err, user) {
+                    expect(err).to.be.null;
+                    expect(user).to.not.be.null;
+                    expect(user.id).to.not.be.null;
+
+                    user.roles[0] = 'UPDATED_ROLE';
+
+                    instance.save(user, function(err, result) {
+                        expect(err).to.be.null;
+
+                        instance.findByLogin(user.login, function(err, user) {
+                            expect(err).to.be.null;
+                            expect(user).to.not.be.null;
+                            expect(user.roles).to.contains('UPDATED_ROLE');
+
+                            done();
+                        });
+
+                    });
+
+                });
+
+            });
+        });
+    });
+
+    it('should find a user by id', function(done) {
+        var user = createDefaultUser();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(user, function (err, result) {
+                expect(err).to.be.null;
+
+                instance.findByLogin(user.login, function (err, user) {
+                    expect(err).to.be.null;
+
+                    instance.findById(user.id, function(err, user) {
+                        expect(err).to.be.null;
+                        expect(user).to.not.be.null;
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('should delete a user by id', function(done) {
+        var user = createDefaultUser();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(user, function (err, result) {
+                expect(err).to.be.null;
+
+                instance.findByLogin(user.login, function (err, user) {
+                    expect(err).to.be.null;
+
+                    instance.delete(user.id, function(err, result) {
+                        expect(err).to.be.null;
+                        console.log(result);
+                        expect(result).to.be.equal('DELETED');
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
 });

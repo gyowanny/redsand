@@ -97,4 +97,22 @@ describe('Org Dao', function() {
 
         });
     });
+
+    it('should return true when an org_id already exists', function(done) {
+        var org = createDefaultOrg();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(org, function(err, result) {
+                expect(err).to.be.null;
+
+                return instance.orgIdExists(org.org_id).then(function(exists) {
+                    expect(Boolean(exists)).to.be.true;
+                    done();
+                });
+
+            });
+        });
+    });
 });

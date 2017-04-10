@@ -35,5 +35,16 @@ module.exports = {
                 }
             });
         });
+    },
+
+    orgIdExists: function(orgId) {
+        return r.table('orgs')('org_id').count(orgId).run(db.global.connection, function(err, count) {
+            if (err) {
+                throw err;
+            }
+
+            return Boolean(count > 0);
+        });
     }
+
 }

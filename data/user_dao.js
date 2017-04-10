@@ -4,14 +4,27 @@ var r = require('rethinkdb');
 module.exports =  {
 
     save: function(user, callback) {
-        r.table('users').insert(user).run(db.global.connection, function(err, result) {
-            if (err) {
-                callback(err, 'ERROR');
-                return;
-            } else {
-                callback(null, 'CREATED');
-            }
-        });
+        if (user.id) {
+            var id = user.id;
+            delete user.id;
+            r.table('users').get(id).update(user).run(db.global.connection, function(err, result) {
+                if (err) {
+                    callback(err, 'ERROR');
+                    return;
+                } else {
+                    callback(null, 'UPDATED');
+                }
+            });
+        } else {
+            r.table('users').insert(user).run(db.global.connection, function (err, result) {
+                if (err) {
+                    callback(err, 'ERROR');
+                    return;
+                } else {
+                    callback(null, 'CREATED');
+                }
+            });
+        }
     },
 
     loginExists: function(login) {
@@ -60,6 +73,31 @@ module.exports =  {
 
                cursor.toArray(callback);
             });
+    },
+
+    findById: function(id, callback) {
+        r.table('users').get(id).run(db.global.connection, function(err, user) {
+            if (err) {
+                callback(err, null);
+                return;
+            }
+           callback(null, user);
+        });
+    },
+
+    delete: function(id, callback) {
+        r.table('users').get(id).delete().run(db.global.connection, function(err, result) {
+           if (err) {
+               callback(err, null);
+               return;
+           }
+
+           if (result.deleted === 1) {
+               callback(null, 'DELETED');
+           } else {
+               callback(null, 'NOT_FOUND');
+           }
+        });
     }
 
 }
