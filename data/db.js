@@ -93,7 +93,7 @@ module.exports = {
     },
 
     close: function() {
-        this.global.connection.close();
+        this.global.connection.close(function(err) {if (err) throw err});
         this.global.connection = null;
     }
 

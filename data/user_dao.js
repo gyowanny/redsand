@@ -11,18 +11,19 @@ module.exports =  {
                 if (err) {
                     callback(err, 'ERROR');
                     return;
-                } else {
-                    callback(null, 'UPDATED');
                 }
+
+                callback(null, 'UPDATED');
             });
         } else {
+            user.create_date = new Date().toISOString();
             r.table('users').insert(user).run(db.global.connection, function (err, result) {
                 if (err) {
                     callback(err, 'ERROR');
                     return;
-                } else {
-                    callback(null, 'CREATED');
                 }
+
+                callback(null, 'CREATED');
             });
         }
     },

@@ -22,7 +22,8 @@ describe('User Dao', function() {
             email: 'user@user.com',
             fullName: 'full name',
             roles: ['ROLE_1','ROLE_2','ROLE_3','ROLE_4'],
-            org_id: ['org_id']
+            org_id: ['org_id'],
+            create_date: new Date()
         };
     };
 

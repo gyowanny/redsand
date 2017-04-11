@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
-var jwt = require('jsonwebtoken');
 var logger = require('winston');
 var passwordService = require('./service/password_service');
 var config = require('./config.js');
@@ -169,21 +168,28 @@ apiAdminRoutes.post('/user', function(req, res) {
 });
 
 apiAdminRoutes.put('/user/:id', function(req, res) {
-    userDao.findById(req.params.id, function(err, userFound) {
+    var id = req.params.id;
+
+    userDao.findById(id, function(err, userFound) {
         if (err) {
-            logger.log('Can not find user by ID [%s] \n %s', req.params.id, err);
+            logger.log('Can not find user by ID [%s] \n %s', id, err);
             res.json(createResponseAsJson(false, 'Can not find user by ID. \n'+err));
+            return;
+        }
+
+        if (!user) {
+            res.status(403).json(createResponseAsJson(false, 'User not found'));
             return;
         }
 
         var user = req.body;
         if (!user.id) {
-            user.id = req.params.id;
+            user.id = id;
         }
 
         userDao.save(user, function (err, result) {
             if (err) {
-                logger.log('Can not update user with ID [%s] \n %s', req.params.id, err);
+                logger.log('Can not update user with ID [%s] \n %s', id, err);
                 res.json(createResponseAsJson(false, 'Can not update user with ID. \n'+err));
                 return;
             }
@@ -202,11 +208,7 @@ apiAdminRoutes.delete('/user/:id', function(req, res) {
            return;
        }
 
-       if (result === 'DELETED') {
-           res.json(createResponseAsJson(true, 'DELETED'));
-       } else {
-           res.json(createResponseAsJson(false, result));
-       }
+       res.json(createResponseAsJson(result === 'DELETED', result));
     });
 });
 
@@ -233,8 +235,64 @@ apiAdminRoutes.post('/org', function(req, res) {
 
 });
 
+apiAdminRoutes.put('/org/:id', function(req, res) {
+
+    var id = req.params.id;
+
+    orgDao.findById(id, function(err, org) {
+
+        if(err) {
+            logger.log('Can not find org by ID [%s] \n %s', id, err);
+            res.status(403).json(createResponseAsJson(false, 'Can not find org by ID. \n'+err));
+            return;
+        }
+
+        if (!org) {
+            res.status(403).json(createResponseAsJson(false, 'Org not found'));
+            return;
+        }
+
+        var org = req.body;
+
+        if(!org.id) {
+            org.id = id;
+        }
+
+        orgDao.save(org, function(err, result) {
+            if (err) {
+                logger.log('Can not update org with ID [%s] \n %s', id, err);
+                res.json(createResponseAsJson(false, 'Can not update org with ID. \n'+err));
+                return;
+            }
+
+            res.json(createResponseAsJson(true, 'UPDATED'));
+        });
+    });
+
+});
+
+apiAdminRoutes.delete('/org/:id', function(req, res) {
+    //deletes an org by id. Safer than by login
+    var id = req.params.id;
+    orgDao.delete(id, function(err, result) {
+        if (err) {
+            logger.log('err', 'Can not delete user ID %s', id);
+            res.status(500).json(createResponseAsJson(false, err));
+            return;
+        }
+
+        res.json(createResponseAsJson(result === 'DELETED', result));
+    });
+});
+
 app.use('/api', apiRoutes);
 app.use('/admin', apiAdminRoutes);
+
+// Shutdown hook
+// process.on('SIGINT', function() {
+//     logger.log('info', 'Closing database connection');
+//     dbSetup.close();
+// });
 
 //App startup
 dbSetup.init(config, function(err, connection) {
@@ -248,8 +306,7 @@ dbSetup.init(config, function(err, connection) {
     }
 
     dbSetup.global.connection = connection;
-    app._rdbCon = connection;
     app.listen(config.express.port);
-    console.log('Server started on port ' + config.express.port);
+    logger.log('info', 'Server started on port %s', config.express.port);
 });
 

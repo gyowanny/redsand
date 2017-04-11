@@ -115,4 +115,88 @@ describe('Org Dao', function() {
             });
         });
     });
+
+    it('should find an org by ID', function(done) {
+        var org = createDefaultOrg();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(org, function(err, result) {
+                expect(err).to.be.null;
+
+                instance.findByOrgId(org.org_id, function(err, orgFound) {
+                    expect(err).to.be.null;
+                    expect(orgFound).to.not.be.null;
+
+                    instance.findById(orgFound.id, function(err, orgFoundById) {
+                        expect(err).to.be.null;
+                        expect(orgFoundById).to.not.be.null;
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('should update org when saving if it contains an ID', function(done) {
+        var org = createDefaultOrg();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(org, function(err, result) {
+                expect(err).to.be.null;
+
+                instance.findByOrgId(org.org_id, function(err, org) {
+                    expect(err).to.be.null;
+                    expect(org).to.not.be.null;
+                    expect(org.id).to.not.be.null;
+
+                    org.tokenExpiration = '10h';
+
+                    instance.save(org, function(err, result) {
+                        expect(err).to.be.null;
+
+                        instance.findByOrgId(org.org_id, function(err, org) {
+                            expect(err).to.be.null;
+                            expect(org).to.not.be.null;
+                            expect(org.tokenExpiration).to.be.equal('10h');
+
+                            done();
+                        });
+
+                    });
+
+                });
+
+            });
+        });
+    });
+
+    it('should delete an org by id', function(done) {
+        var org = createDefaultOrg();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(org, function (err, result) {
+                expect(err).to.be.null;
+
+                instance.findByOrgId(org.org_id, function (err, org) {
+                    expect(err).to.be.null;
+
+                    instance.delete(org.id, function(err, result) {
+                        expect(err).to.be.null;
+                        console.log(result);
+                        expect(result).to.be.equal('DELETED');
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
 });
