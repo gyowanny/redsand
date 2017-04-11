@@ -7,6 +7,7 @@ module.exports = {
         if(org.id) {
             var id = org.id;
             delete org.id;
+
             r.table('orgs').get(id).update(org).run(db.global.connection, function (err, result) {
                 if (err) {
                     callback(err, 'ERROR');
