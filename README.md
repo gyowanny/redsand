@@ -48,13 +48,13 @@ This is the current structure:
 
 ```json
 {
-	"login":"asmith",
-	"password":"<encrypted pwd>",
-	"email":"adam@smith.com',
-	"fullName":"Adam Smith",
-	"roles":["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
-	"org_id":["org_id1", "org_id2"],
-	"create_date":"2017-01-01T11:30:21.986Z"
+  "login":"asmith",
+  "password":"<encrypted pwd>",
+  "email":"adam@smith.com',
+  "fullName":"Adam Smith",
+  "roles":["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
+  "org_id":["org_id1", "org_id2"],
+  "create_date":"2017-01-01T11:30:21.986Z"
 }
 ```
 
@@ -66,10 +66,10 @@ The current structure is like below:
 
 ```json
 {
-    "org_id": "org_id",
-    "name": "Organization Name",
-    "tokenExpiration": "24h", //*Using Json Web Token standard format: 60, "2 days", "10h", "7d"*
-    "inactive": false
+  "org_id": "org_id",
+  "name": "Organization Name",
+  "tokenExpiration": "24h", //*Using Json Web Token standard format: 60, "2 days", "10h", "7d"*
+  "inactive": false
 }
 ```
 
@@ -104,8 +104,8 @@ The API endpoints are the ones your application must call in order to authentica
 
 ```json
 {
- "success":false,
- "message":"UNAUTHORIZED"
+  "success":false,
+  "message":"UNAUTHORIZED"
 }
 ```
 
@@ -118,7 +118,7 @@ The API endpoints are the ones your application must call in order to authentica
 
 ```json
 {
-	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
 }
 ```
 2. Performs the previous validation plus validates the token against the user info in order to assure that token belongs to it. This kind of validation might be useful for long duration tokens:
@@ -127,14 +127,14 @@ The API endpoints are the ones your application must call in order to authentica
 
 ```json
 {
- "user": {
+  "user": {
      "login": "adam.smith",
      "email": "adam.smith@economics.com",
      "fullName": "Adam Smith",
      "roles": ["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
      "org_id": ["ECONOMICS"]
- },
- "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
 }
 ```
 
