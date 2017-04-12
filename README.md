@@ -94,9 +94,10 @@ The API endpoints are the ones your application must call in order to authentica
   
   ```json
   {
-    "success": true,
-    "message": "AUTHORIZED",
-    "roles": ["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],         "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMlQxNTo0NzoxNC43NjVaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUgMiIsImxvZ2luIjoibG9naW4iLCJvcmdfaWQiOlsib3JnX2lkIl0sInJvbGVzIjpbIlJPTEVfMSIsIlJPTEVfMiIsIlJPTEVfMyIsIlJPTEVfNCJdfSwiaWF0IjoxNDkyMDE2NTkyLCJleHAiOjE0OTIwNTI1OTJ9.Cetry2TV2v-VR_nbHnTJKtE9nmz0JHLWecRG2I9NDFc"
+  "success": true,
+  "message": "AUTHORIZED",
+  "roles": ["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],         
+  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMlQxNTo0NzoxNC43NjVaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUgMiIsImxvZ2luIjoibG9naW4iLCJvcmdfaWQiOlsib3JnX2lkIl0sInJvbGVzIjpbIlJPTEVfMSIsIlJPTEVfMiIsIlJPTEVfMyIsIlJPTEVfNCJdfSwiaWF0IjoxNDkyMDE2NTkyLCJleHAiOjE0OTIwNTI1OTJ9.Cetry2TV2v-VR_nbHnTJKtE9nmz0JHLWecRG2I9NDFc"
   }
   ```
 
