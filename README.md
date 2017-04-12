@@ -123,5 +123,13 @@ The API endpoints are the ones your application must call in order to authentica
 These endpoints are meant to create and maintain users and organzations info. By default in the production environment they must be called with a valid token because a token validation filter is added on the top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
 
 - `POST /admin/user`
+- `PUT /admin/user/:id`
+- `DELETE /admin/user/:id`
+- `GET /admin/user/:org_id`
+
+- `POST /admin/org`
+- `PUT /admin/org/:id`
+- `DELETE /admin/org/:id`
+
 
 `TO ADD FURTHER DETAILS`
