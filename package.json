@@ -24,14 +24,16 @@
   "homepage": "https://github.com/gyowanny/redsand#readme",
   "dependencies": {
     "async": "2.2.0",
+    "base-64": "0.1.0",
     "bcryptjs": "2.4.3",
     "body-parser": "1.17.1",
     "express": "4.15.2",
     "jsonwebtoken": "7.3.0",
+    "lodash": "latest",
     "morgan": "1.8.1",
     "rethinkdb": "2.3.3",
-    "winston": "2.3.1",
-    "lodash": "latest"
+    "utf-8": "1.0.0",
+    "winston": "2.3.1"
   },
   "devDependencies": {
     "chai": "3.5.0",

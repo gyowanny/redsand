@@ -4,6 +4,7 @@ var tokenService = require('../../service/token_service');
 var passwordService = require('../../service/password_service');
 var logger = require('winston');
 var config = require('../../config.js');
+var base64 = require('base-64');
 
 logger.level = config.logging.level;
 
@@ -14,37 +15,53 @@ var createResponseAsJson = function(isSuccess, message) {
     };
 };
 
+var decodePayloadFromBase64ToUtf8Array = function(encodedPayload) {
+    var bytes = base64.decode(encodedPayload);
+    var decoded = new Buffer(bytes).toString('utf-8');
+    return decoded.split(':');
+}
+
 module.exports = function(req, res) {
-    var login = req.body.login;
-    var password = req.body.password;
+    var decodedPayload = decodePayloadFromBase64ToUtf8Array(req.body.auth);
+    var decodedLogin = decodedPayload[0];
+    var decodedPassword = decodedPayload[1];
 
-    userDao.findByLogin(login, function(err, user) {
+    userDao.findByLogin(decodedLogin, function(err, userFound) {
 
-        if (err || !user) {
-            logger.log('warn', 'login not authorized for user %s', login);
+        if (err) {
+            logger.log('error', 'login not authorized for user %s', decodedLogin);
+            res.status(500).json(createResponseAsJson(false, 'ERROR \n'+JSON.stringify(err)));
+        }
+
+        if (!userFound) {
+            logger.log('warn', 'login not authorized for user %s', decodedLogin);
             res.status(403).json(createResponseAsJson(false, 'UNAUTHORIZED'));
+            return;
+        }
+
+        var match = passwordService.matches(decodedPassword, userFound.password);
+
+        if (match == true) {
+            orgDao.findByOrgId(user.org_id, function(err, org) {
+                var expiry = config.defaultTokenExpiration;
+                if (org) {
+                    expiry = org.tokenExpiration;
+                }
+
+                //Removing the password field before encoding
+                delete userFound.password;
+                
+                //signs and returns the token
+                var token = tokenService.generate(userFound, config.secretKey, expiry);
+
+                // returns the information including token as JSON
+                var response = createResponseAsJson(true, 'OK');
+                response.token = token;
+                res.json(response);
+            });
+
         } else {
-            var response;
-            var match = passwordService.matches(password, user.password);
-
-            if (match == true) {
-                orgDao.findByOrgId(user.org_id, function(err, org) {
-                    var expiry = "24h";
-                    if (org) {
-                        expiry = org.tokenExpiration;
-                    }
-                    //signs and returns the token
-                    var token = tokenService.generate(user, config.secretKey, expiry);
-
-                    // returns the information including token as JSON
-                    response = createResponseAsJson(true, 'OK');
-                    response.token = token;
-                    res.json(response);
-                });
-
-            } else {
-                res.status(403).json(createResponseAsJson(false, 'UNAUTHORIZED'));
-            }
+            res.status(403).json(createResponseAsJson(false, 'UNAUTHORIZED'));
         }
     });
 }

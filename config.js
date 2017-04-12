@@ -14,5 +14,6 @@ module.exports = {
     logging: {
         level: 'debug'
     },
-    secretKey: process.env.SECRET_KEY
+    secretKey: process.env.SECRET_KEY,
+    defaultTokenExpiration: '24h'
 };
