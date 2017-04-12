@@ -47,7 +47,30 @@ The API endpoints are the ones your application must call in order to authentica
    }
    ```
 
-- `/api/validate` - Validates a given JSON Web Token 
+- `/api/validate` - Validates a given JSON Web Token. There are 2 ways you can validade a token:
+
+1. Validate the token like checking if it's expired for example, you just have to send the token itself in the payload:
+
+```javascript
+{
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
+}
+```
+2. Performs the previous validation plus validates the token against the user info in order to assure that token belongs to it. This kind of validation might be useful for long duration tokens:
+
+```javascript
+{
+ "user": {
+     "login": "adam.smith",
+     "email": "adam.smith@economics.com",
+     "fullName": "Adam Smith",
+     "roles": ["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
+     "org_id": ["ECONOMICS"]
+ },
+ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
+}
+```
+
 
 ## ADMIN Endpoints
 
