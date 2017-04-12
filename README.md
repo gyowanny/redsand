@@ -120,7 +120,7 @@ The API endpoints are the ones your application must call in order to authentica
 
 ## ADMIN Endpoints
 
-These endpoints are meant to create and maintain users and organizations info. By default in the production environment they must be called with a valid token because a token validation filter is added on the top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
+These endpoints are meant to create and maintain users and organizations info. By default in the production environment they must be called with a valid token because a token validation filter is added on top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
 
 - `POST /admin/user`
 - `PUT /admin/user/:id`
