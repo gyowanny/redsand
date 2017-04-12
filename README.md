@@ -19,14 +19,13 @@ It uses rethinkdb as database for the sake of speed and simplicity and yet makes
 
 1. Clone the project:
 git clone https://github.com/gyowanny/redsand
-cd redsand
-
-2. npm install
-3. npm start
-4. If everything goes fine you will see the following log message:
+2. cd redsand
+3. npm install
+4. npm start
+5. If everything goes fine you will see the following log message:
 `info: Server started on port 3000`
 
-That's it! Now you can go ahead and set your application up to call the endpoints or even test them via `curl`, `postman` or whatever tool you prefer.
+That's it! Now you can go ahead and set your application up to call the endpoints or simply test them via `curl`, `postman` or whatever tool you prefer.
 
 # Redsand Overview
 
@@ -39,7 +38,14 @@ Basically the available endpoints are split in API endpoints and ADMIN endpoints
 The API endpoints are the ones your application must call in order to authenticate users and validate their tokens as well.
 - `/api/auth` - Authenticates a user and returns the JSON Web Token. The payload must be the login and the Base64 encoded password.
 
-  **Body payload example**: `{"login":"admin.smith", "password":"ZWNvbm9taWNzU3Vja3M="}`
+  **Body payload example**: 
+  
+  ```javascript
+  {
+     "login":"admin.smith", 
+     "password":"ZWNvbm9taWNzU3Vja3M="
+   }
+   ```
 
 - `/api/validate` - Validates a given JSON Web Token 
 
