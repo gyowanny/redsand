@@ -90,7 +90,7 @@ The API endpoints are the ones your application must call in order to authentica
   }
    ```
 
-  **Sucessful response payload example**:
+  **Successful response payload example**:
   
   ```json
   {
@@ -100,7 +100,7 @@ The API endpoints are the ones your application must call in order to authentica
   }
   ```
 
-  **Unsucessful response paylod example**:
+  **Unsuccessful response paylod example**:
 
   ```json
   {
