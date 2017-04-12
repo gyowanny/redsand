@@ -2,7 +2,7 @@
 # Redsand
 ![My image](http://www.ecastles.co.uk/redsand3.jpg)
 
-User authentication API using Json Web Token. 
+User authentication API using [JSON web token](https://jwt.io). 
 The "red sand" name is a reference to the Red Sands fort also known as Maunsell Army Sea Forts (http://www.ecastles.co.uk/armyforts.html)
 
 # Why?
@@ -29,7 +29,7 @@ That's it! Now you can go ahead and set your application up to call the endpoint
 
 # Redsand Overview
 
-Redsand offers an easy way to add user authentication to your applications using JSON web tokens and storing user data making your life easier by not duplicating code accross your projects.
+Redsand offers an easy way to add user authentication to your applications using [JSON web tokens](https://jwt.io) and storing user data making your life easier by not duplicating code accross your projects.
 
 Basically the available endpoints are split in API endpoints and ADMIN endpoints.
 
