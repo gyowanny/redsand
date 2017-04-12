@@ -13,5 +13,6 @@ module.exports = {
     },
     logging: {
         level: 'debug'
-    }
+    },
+    secretKey: process.env.SECRET_KEY
 };
