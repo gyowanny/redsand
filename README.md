@@ -36,7 +36,7 @@ Basically the available endpoints are split in API endpoints and ADMIN endpoints
 ## API Endpoints
 
 The API endpoints are the ones your application must call in order to authenticate users and validate their tokens as well.
-- `/api/auth` - Authenticates a user and returns the JSON Web Token. The payload must be Base64 encoded using the Basic auth pattenr (`login:password`).
+- `/api/auth` - Authenticates a user and returns the JSON Web Token. The payload must be Base64 encoded using the Basic auth pattern (`login:password`).
 
   **Body payload example**: 
   
