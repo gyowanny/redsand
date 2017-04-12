@@ -6,7 +6,7 @@ User authentication API using [JSON web token](https://jwt.io).
 The "red sand" name is a reference to the Red Sands fort also known as Maunsell Army Sea Forts (http://www.ecastles.co.uk/armyforts.html)
 
 # Why?
-Just a simple and quick way to add user authentication to your application at the development/prototyping stage or even in production at your own risk (for while). 
+Just a simple and quick way to add user authentication to your application at the development/prototyping stage or even in production at your own risk (for while). You can run it as a microservice or embbed the source code into your project.
 It uses rethinkdb as database for the sake of speed and simplicity and yet makes it cluster friendly
 
 # Pre-requisites:
@@ -33,16 +33,59 @@ Redsand offers an easy way to add user authentication to your applications using
 
 Basically the available endpoints are split in API endpoints and ADMIN endpoints.
 
+## Data Overview
+
+The data is persisted into a RethinkDB database in JSON format and currently there are 2 entities as part of the project:
+
+### `Users`
+
+There's nothing much to explain about this entity. It basically contains the info required to authenticate users and it worth to mention that the password is encrypted before being persisted so that there's now way to know the plain version of it. 
+Another useful feature is the ability to share the same user among several applications/organizations. 
+
+> I am still thinking about the roles structure since I'm not sure whether to keep it simple or create something like "Roles per organization" because the way it is now, unless the roles are the same for all the organizations the user belongs to, it would require a name convention for the roles like `"ORG_ID1.ROLE_1, ORG_ID2.ANOTHER_ROLE"`.
+
+This is the current structure:
+
+```json
+{
+    "login": "asmith",
+    "password": "<encrypted pwd>",
+    "email": "adam@smith.com',
+    "fullName": "Adam Smith",
+    "roles": ["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
+    "org_id": ["org_id1", "org_id2"],
+    "create_date": "2017-01-01T11:30:21.986Z"
+}
+```
+
+
+### `Orgs`
+
+Orgs or Organizations are meant to store some custom configurations like token expiration which we know that each application has it's own way to deal with session/token expiration. You can also deactivate an organization so that the users can't authenticate for it. 
+The current structure is like below:
+
+```json
+{
+    "org_id": "org_id",
+    "name": "Organization Name",
+    "tokenExpiration": "24h",
+    "inactive": false
+}
+```
+
+
+
 ## API Endpoints
 
 The API endpoints are the ones your application must call in order to authenticate users and validate their tokens as well.
-- `/api/auth` - Authenticates a user and returns the JSON Web Token. The payload must be Base64 encoded using the Basic auth pattern (`login:password`).
+- `/api/auth` - Authenticates a user and returns the JSON Web Token. The payload `auth` property value must be Base64 encoded using the Basic auth pattern (`login:password`). [This web site](https://www.base64encode.org) is really helpful to encode/decode Base64 texts. Also the payload must come with the org_id.
 
   **Body payload example**: 
   
-  ```javascript
+  ```json
   {
-    "auth": "bG9naW46cGFzc3dvcmQ="
+    "auth": "bG9naW46cGFzc3dvcmQ=",
+    "org_id": "org_id"
   }
    ```
 
@@ -52,7 +95,7 @@ The API endpoints are the ones your application must call in order to authentica
 
   **Body payload example**:
 
-```javascript
+```json
 {
 	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
 }
@@ -61,7 +104,7 @@ The API endpoints are the ones your application must call in order to authentica
 
   **Body payload example**:
 
-```javascript
+```json
 {
  "user": {
      "login": "adam.smith",
