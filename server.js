@@ -39,6 +39,7 @@ apiRoutes.post('/validate', function(req, res) {
 
 var adminRoutes = express.Router();
 
+//Activates the json web token filter for production environment
 if (process.env.NODE_ENV === 'PROD') {
     adminRoutes.use(jwtFilter);
 }
