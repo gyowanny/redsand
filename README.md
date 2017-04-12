@@ -78,7 +78,7 @@ The current structure is like below:
 ## API Endpoints
 
 The API endpoints are the ones your application must call in order to authenticate users and validate their tokens as well.
-- `/api/auth` - Authenticates a user and returns the JSON Web Token. The payload `auth` property value must be Base64 encoded using the Basic auth pattern (`login:password`). [This web site](https://www.base64encode.org) is really helpful to encode/decode Base64 texts. Also the payload must come with the org_id.
+- `POST /api/auth` - Authenticates a user and returns the JSON Web Token. The payload `auth` property value must be Base64 encoded using the Basic auth pattern (`login:password`). [This web site](https://www.base64encode.org) is really helpful to encode/decode Base64 texts. Also the payload must come with the org_id the user wants to authenticate against.
 
   **Body payload example**: 
   
@@ -89,7 +89,7 @@ The API endpoints are the ones your application must call in order to authentica
   }
    ```
 
-- `/api/validate` - Validates a given JSON Web Token. There are 2 ways you can validade a token:
+- `POST /api/validate` - Validates a given JSON Web Token and returns 200 status. There are 2 ways you can validade a token:
 
 1. Validate the token like checking if it's expired for example, you just have to send the token itself in the payload:
 
@@ -121,3 +121,7 @@ The API endpoints are the ones your application must call in order to authentica
 ## ADMIN Endpoints
 
 These endpoints are meant to create and maintain users and organzations info. By default in the production environment they must be called with a valid token because a token validation filter is added on the top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
+
+- `POST /admin/user`
+
+`TO ADD FURTHER DETAILS`
