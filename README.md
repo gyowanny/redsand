@@ -48,13 +48,13 @@ This is the current structure:
 
 ```json
 {
-    "login": "asmith",
-    "password": "<encrypted pwd>",
-    "email": "adam@smith.com',
-    "fullName": "Adam Smith",
-    "roles": ["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
-    "org_id": ["org_id1", "org_id2"],
-    "create_date": "2017-01-01T11:30:21.986Z"
+	"login":"asmith",
+	"password":"<encrypted pwd>",
+	"email":"adam@smith.com',
+	"fullName":"Adam Smith",
+	"roles":["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
+	"org_id":["org_id1", "org_id2"],
+	"create_date":"2017-01-01T11:30:21.986Z"
 }
 ```
 
@@ -68,7 +68,7 @@ The current structure is like below:
 {
     "org_id": "org_id",
     "name": "Organization Name",
-    "tokenExpiration": "24h",
+    "tokenExpiration": "24h", //*Using Json Web Token standard format: 60, "2 days", "10h", "7d"*
     "inactive": false
 }
 ```
