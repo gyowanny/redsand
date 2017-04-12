@@ -31,7 +31,7 @@ That's it! Now you can go ahead and set your application up to call the endpoint
 
 Redsand offers an easy way to add user authentication to your applications using [JSON web tokens](https://jwt.io) and storing user data making your life easier by not duplicating code accross your projects.
 
-Basically the available endpoints are split in API endpoints and ADMIN endpoints.
+Basically the available endpoints are split between API endpoints and ADMIN endpoints.
 
 ## Data Overview
 
