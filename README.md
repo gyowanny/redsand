@@ -110,7 +110,7 @@ The API endpoints are the ones your application must call in order to authentica
   ```
 
 
-- `POST /api/validate` - Validates a given JSON Web Token and returns 200 status. There are 2 ways you can validade a token:
+- `POST /api/validate` - Validates a given JSON Web Token and returns 204 if it's valid otherwise returns 403. There are 2 ways you can validade a token:
 
   1. Validate the token like checking if it's expired for example, you just have to send the token itself in the payload:
 
