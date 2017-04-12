@@ -26,7 +26,20 @@ cd redsand
 4. If everything goes fine you will see the following log message:
 `info: Server started on port 3000`
 
-That's it! Now you can go ahead and set your application up to call the redsand's endpoints.
+That's it! Now you can go ahead and set your application up to call the endpoints or even test them via `curl`, `postman` or whatever tool you prefer.
 
 # Redsand Overview
 
+Redsand offers an easy way to add user authentication to your applications using JSON web tokens and storing user data making your life easier by not duplicating code accross your projects.
+
+Basically the available endpoints are split in API endpoints and ADMIN endpoints.
+
+## API Endpoints
+
+The API endpoints are the ones your application must call in order to authenticate users and validate their tokens as well.
+- `/api/auth` - Authenticates a user and returns the JSON Web Token
+- `/api/validate` - Validates a given JSON Web Token 
+
+## ADMIN Endpoints
+
+These endpoints are used to create and maintain user and organzations information.
