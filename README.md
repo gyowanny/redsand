@@ -89,6 +89,27 @@ The API endpoints are the ones your application must call in order to authentica
   }
    ```
 
+  **Sucessful response payload example**:
+  
+```json
+{
+  "success": true,
+  "message": "AUTHORIZED",
+  "roles": ["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
+  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMlQxNTo0NzoxNC43NjVaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUgMiIsImxvZ2luIjoibG9naW4iLCJvcmdfaWQiOlsib3JnX2lkIl0sInJvbGVzIjpbIlJPTEVfMSIsIlJPTEVfMiIsIlJPTEVfMyIsIlJPTEVfNCJdfSwiaWF0IjoxNDkyMDE2NTkyLCJleHAiOjE0OTIwNTI1OTJ9.Cetry2TV2v-VR_nbHnTJKtE9nmz0JHLWecRG2I9NDFc"
+}
+```
+
+  **Unsucessful response paylod example**:
+
+```json
+{
+ "success":false,
+ "message":"UNAUTHORIZED"
+}
+```
+
+
 - `POST /api/validate` - Validates a given JSON Web Token and returns 200 status. There are 2 ways you can validade a token:
 
 1. Validate the token like checking if it's expired for example, you just have to send the token itself in the payload:
@@ -120,7 +141,7 @@ The API endpoints are the ones your application must call in order to authentica
 
 ## ADMIN Endpoints
 
-These endpoints are meant to create and maintain users and organizations info. By default in the production environment they must be called with a valid token because a token validation filter is added on top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
+These endpoints are meant to create and maintain users and organizations info. In a near future there will be a web front end to administrate the application but until this doesn't happen you will have to do that manually via postman, for example. 
 
 - `POST /admin/user`
 - `PUT /admin/user/:id`
@@ -132,4 +153,7 @@ These endpoints are meant to create and maintain users and organizations info. B
 - `DELETE /admin/org/:id`
 
 
-`TO ADD FURTHER DETAILS`
+### NOTES
+
+- By default in the production environment they must be called with a valid token because a token validation filter is added on top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
+
