@@ -37,9 +37,12 @@ Basically the available endpoints are split in API endpoints and ADMIN endpoints
 ## API Endpoints
 
 The API endpoints are the ones your application must call in order to authenticate users and validate their tokens as well.
-- `/api/auth` - Authenticates a user and returns the JSON Web Token
+- `/api/auth` - Authenticates a user and returns the JSON Web Token. The payload must be the login and the Base64 encoded password.
+
+  **Body payload example**: `{"login":"admin.smith", "password":"ZWNvbm9taWNzU3Vja3M="}`
+
 - `/api/validate` - Validates a given JSON Web Token 
 
 ## ADMIN Endpoints
 
-These endpoints are used to create and maintain user and organzations information.
+These endpoints are meant to create and maintain users and organzations info. By default in the production environment they must be called with a valid token (this is achived via a filter added to the admin router). Also by default the environemnt is set to Development so the filter is deactivated.
