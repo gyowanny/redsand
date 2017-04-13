@@ -42,7 +42,7 @@ The data is persisted into a RethinkDB database in JSON format and currently the
 There's nothing much to explain about this entity. It basically contains the info required to authenticate users and it worth to mention that the password is encrypted before being persisted so that there's now way to know the plain version of it. 
 Another useful feature is the ability to share the same user among several applications/organizations. 
 
-> I am still thinking about the roles structure since I'm not sure whether to keep it simple or create something like "Roles per organization" because the way it is now, unless the roles are the same for all the organizations the user belongs to, it would require a name convention for the roles like `"ORG_ID1.ROLE_1, ORG_ID2.ANOTHER_ROLE"`.
+> I am still thinking about the roles structure since I'm not sure whether to keep it simple or create something like "Roles per organization" because the way it is now, unless the roles are the same for all the organizations the user belongs to, it would require a name convention for them like `"ORG_ID1.ROLE_1, ORG_ID2.ANOTHER_ROLE"`.
 
 This is the current structure:
 
