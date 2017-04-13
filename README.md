@@ -79,7 +79,7 @@ The current structure is like below:
 
 The API endpoints are the ones your application must call in order to authenticate users and validate their tokens as well.
 
-- `POST /api/auth` - Authenticates a user and returns a response payload with the JSON Web Token and a set of roles the user is authorized for so that you can keep this info in your application and use it to grant permission based on them. 
+- `POST /api/auth` - Authenticates a user and returns a response payload with the JSON Web Token and a set of roles the user is authorized for so that you can keep this info in your application and use it to grant permission based on them. Returning the roles avoids your application to call redsand everytime to validate user's credentials, specially for mobile apps.
 The request payload `auth` property value must be Base64 encoded using the Basic auth pattern (`login:password`). [This web site](https://www.base64encode.org) is really helpful to encode/decode Base64 texts. Also the request payload must come with the org_id the user wants to authenticate against.
 
   **Request body example**: 
