@@ -173,5 +173,5 @@ Story   |
 Store user activity in a table |
 Add user password expiration policy |
 Add user password reset. Useful for app features like 'Forgot your password' |
-User activation via email with a link. *Mental note:* Use queue for background processing https://rethinkdb.com/docs/publish-subscribe/javascript/ |
+User activation via email with a link. Make it capable to use email API services like Mailgun(https://www.npmjs.com/package/mailgun-js), Mailchimp. *Mental note:* Use queue for background processing https://rethinkdb.com/docs/publish-subscribe/javascript/ |
 
