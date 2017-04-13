@@ -172,5 +172,5 @@ Story   |
 --------|
 Store user activity in a table |
 Add user password expiration policy |
-User activation via email with a link. *Mental note:* Use queue for background processing https://medium.com/node-js-tips-tricks/implementing-a-job-queue-with-node-js-ffcfbc824b01 |
+User activation via email with a link. *Mental note:* Use queue for background processing https://rethinkdb.com/docs/publish-subscribe/javascript/ |
 
