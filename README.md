@@ -82,7 +82,7 @@ The API endpoints are the ones your application must call in order to authentica
 - `POST /api/auth` - Authenticates a user and returns a response payload with the JSON Web Token and a set of roles the user is authorized for so that you can keep this info in your application and use it to grant permission based on them. 
 The request payload `auth` property value must be Base64 encoded using the Basic auth pattern (`login:password`). [This web site](https://www.base64encode.org) is really helpful to encode/decode Base64 texts. Also the request payload must come with the org_id the user wants to authenticate against.
 
-  **Body payload example**: 
+  **Request body example**: 
   
   ```json
   {
@@ -116,7 +116,7 @@ The request payload `auth` property value must be Base64 encoded using the Basic
 
   1. Validate the token like checking if it's expired for example, you just have to send the token itself in the payload:
 
-    **Body payload example**:
+    **Request body example**:
 
     ```json
     {
@@ -125,7 +125,7 @@ The request payload `auth` property value must be Base64 encoded using the Basic
     ```
   2. Performs the previous validation plus validates the token against the user info in order to assure that token belongs to it. This kind of validation might be useful for long duration tokens:
 
-    **Body payload example**:
+    **Request body example**:
 
     ```json
     {
@@ -143,12 +143,19 @@ The request payload `auth` property value must be Base64 encoded using the Basic
 
 ## ADMIN Endpoints
 
-These endpoints are meant to create and maintain users and organizations info. In a near future there will be a web front end to administrate the application but until this doesn't happen you will have to do that manually via postman, for example. 
+These endpoints are meant to create and maintain users and organizations info. Hopefully in a near future there will be a web front end to make it easier but until this doesn't happen you will have to do that manually via postman, for example. 
 
-- `POST /admin/user`
-- `PUT /admin/user/:id`
+- `POST /admin/user`: 
+  
+  Creates a user 
+
+- `PUT /admin/user/:id` 
+
+  Updates a user. You can only send in the request body the fields that must be changed.
+  
 - `DELETE /admin/user/:id`
 - `GET /admin/user/:org_id`
+
 
 - `POST /admin/org`
 - `PUT /admin/org/:id`
@@ -158,4 +165,12 @@ These endpoints are meant to create and maintain users and organizations info. I
 ### NOTES
 
 - By default in the production environment they must be called with a valid token because a token validation filter is added on top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
+
+# Backlog
+
+Story   |
+--------|
+Store user activity in a table |
+Add user password expiration policy |
+User activation via email with a link |
 
