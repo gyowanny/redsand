@@ -172,5 +172,6 @@ Story   |
 --------|
 Store user activity in a table |
 Add user password expiration policy |
+Add user password reset. Useful for app features like 'Forgot your password' |
 User activation via email with a link. *Mental note:* Use queue for background processing https://rethinkdb.com/docs/publish-subscribe/javascript/ |
 
