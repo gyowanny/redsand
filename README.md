@@ -14,6 +14,8 @@ It uses rethinkdb as database for the sake of speed and simplicity and yet makes
 - [NPM](https://www.npmjs.com/get-npm)
 - [RethinkDB](https://www.rethinkdb.com)
 
+**We are going to release a docker image soon!**
+
 # Hands on!
 *Make sure that RethinkDB is started*
 
@@ -165,6 +167,17 @@ These endpoints are meant to create and maintain users and organizations info. H
 ### NOTES
 
 - By default in the production environment they must be called with a valid token because a token validation filter is added on top of each request. Also by default the environemnt is set to Development so the filter is deactivated.
+
+# If you want to develop
+
+If you want to constribute or even make your own customizations you will need just an additional step which is to install [docker-compose](https://docs.docker.com/compose/) since we run the tests against a RethinkDB docker image so that your local rethinkdb installation is not touched.
+
+- `npm test` to run the tests
+- `npm start` to run the app (Notice that currently the app will use your local RethinkDB installation instead of the docker container). If you want to use the docker container you need to follow the steps bellow:
+    1. Stop your local RethinkDB instance; 
+    2. Edit the config.js file and change the rethinkdb port property to `37250`;
+    3. On the project's root folder run `docker-compose up -d`. It will spin up the database docker container;
+    4. And finally start the app by running `npm start`. 
 
 # Backlog
 
