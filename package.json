@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "export NODE_ENV=dev && export SECRET_KEY=secret-key && nodemon server.js",
-    "test": "mocha --recursive --timeout 10000"
+    "pretest": "docker-compose up -d && sleep 2",
+    "test": "mocha --recursive --timeout 10000",
+    "posttest": "docker-compose stop"
   },
   "repository": {
     "type": "git",
