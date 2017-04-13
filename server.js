@@ -44,10 +44,6 @@ if (process.env.NODE_ENV === 'PROD') {
     adminRoutes.use(jwtFilter);
 }
 
-adminRoutes.get('/user/org/:orgid', function(req, res) {
-    usersByOrgRoute(req, res);
-});
-
 adminRoutes.post('/user', function(req, res) {
     createUserRoute(req, res);
 });
@@ -58,6 +54,10 @@ adminRoutes.put('/user/:id', function(req, res) {
 
 adminRoutes.delete('/user/:id', function(req, res) {
     deleteUserRoute(req, res);
+});
+
+adminRoutes.get('/user/org/:orgid', function(req, res) {
+    usersByOrgRoute(req, res);
 });
 
 adminRoutes.post('/org', function(req, res) {

@@ -21,10 +21,19 @@ var decodePayloadFromBase64ToUtf8Array = function(encodedPayload) {
     return decoded.split(':');
 }
 
+var getTokenExpirationFromOrgOrDefaultFromConfig = function(org) {
+    if (org) {
+        return org.tokenExpiration;
+    } else {
+        return config.defaultTokenExpiration;
+    }
+}
+
 module.exports = function(req, res) {
     var decodedPayload = decodePayloadFromBase64ToUtf8Array(req.body.auth);
     var decodedLogin = decodedPayload[0];
     var decodedPassword = decodedPayload[1];
+    var requestedOrgId = req.body.org_id;
 
     userDao.findByLogin(decodedLogin, function(err, userFound) {
 
@@ -39,24 +48,22 @@ module.exports = function(req, res) {
             return;
         }
 
-        var match = passwordService.matches(decodedPassword, userFound.password);
+        var passwordMatches = passwordService.matches(decodedPassword, userFound.password);
 
-        if (match == true) {
-            orgDao.findByOrgId(user.org_id, function(err, org) {
-                var expiry = config.defaultTokenExpiration;
-                if (org) {
-                    expiry = org.tokenExpiration;
-                }
+        if (passwordMatches == true && userFound.org_id.indexOf(requestedOrgId) > -1) {
+            orgDao.findByOrgId(requestedOrgId, function(err, orgFound) {
+                var tokenExpiration = getTokenExpirationFromOrgOrDefaultFromConfig(orgFound);
 
                 //Removing the password field before encoding
                 delete userFound.password;
                 
                 //signs and returns the token
-                var token = tokenService.generate(userFound, config.secretKey, expiry);
+                var token = tokenService.generate(userFound, config.secretKey, tokenExpiration);
 
                 // returns the information including token as JSON
-                var response = createResponseAsJson(true, 'OK');
+                var response = createResponseAsJson(true, 'AUTHORIZED');
                 response.token = token;
+                response.roles = userFound.roles;
                 res.json(response);
             });
 
