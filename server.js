@@ -103,6 +103,7 @@ uiRoutes.get('/admin/org/delete/:id', function(req, res) {
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
 app.use('/ui', uiRoutes);
+app.use('/js', express.static('views/js'))
 
 //App startup
 dbSetup.init(config, function(err, connection) {
