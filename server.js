@@ -15,15 +15,20 @@ var createOrgRoute = require('./route/admin/org/create_org_route');
 var updateOrgRoute = require('./route/admin/org/update_org_route');
 var deleteOrgRoute = require('./route/admin/org/delete_org_route');
 var jwtFilter = require('./filter/jwt_filter');
+var orgUiListRoute = require('./route/ui/admin/org/org_list');
+var orgUiCreateEditRoute = require('./route/ui/admin/org/org_edit');
+var orgUiDeleteRoute = require('./route/ui/admin/org/org_delete');
 
 logger.level = config.logging.level;
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.set('views', __dirname+'/views');
+app.set('view engine', 'ejs');
 
 app.use(morgan('dev'));
 
-app.get('/', function(req, res){
+app.get('/api', function(req, res) {
     res.send('Hello! This is Red Sand Authentication API.');
 });
 
@@ -72,8 +77,32 @@ adminRoutes.delete('/org/:id', function(req, res) {
    deleteOrgRoute(req, res);
 });
 
+// UI mappings
+var uiRoutes = express.Router();
+
+uiRoutes.get('/admin', function(req, res) {
+    res.render('admin/index');
+});
+
+uiRoutes.get('/admin/org', function(req, res) {
+    orgUiListRoute(req, res);
+});
+
+uiRoutes.get('/admin/org/create', function(req, res) {
+    orgUiCreateEditRoute(req,res);
+});
+
+uiRoutes.get('/admin/org/edit/:id', function(req, res) {
+    orgUiCreateEditRoute(req,res);
+});
+
+uiRoutes.get('/admin/org/delete/:id', function(req, res) {
+    orgUiDeleteRoute(req,res);
+});
+
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
+app.use('/ui', uiRoutes);
 
 //App startup
 dbSetup.init(config, function(err, connection) {
@@ -88,5 +117,6 @@ dbSetup.init(config, function(err, connection) {
 
     dbSetup.global.connection = connection;
     app.listen(config.express.port);
+
     logger.log('info', 'Server started on port %s', config.express.port);
 });

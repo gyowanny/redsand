@@ -86,6 +86,17 @@ module.exports = {
                 callback(null, 'NOT_FOUND');
             }
         });
+    },
+
+    getAll: function(callback) {
+        r.table('orgs').run(db.global.connection, function(err, cursor) {
+            if (err) {
+                callback(err, null);
+                return;
+            }
+
+            cursor.toArray(callback);
+        });
     }
 
 }

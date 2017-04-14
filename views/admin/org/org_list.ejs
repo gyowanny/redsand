@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <% include ../../partials/head %>
+</head>
+<body class="container">
+
+    <header>
+    <% include ../../partials/header %>
+</header>
+
+<main>
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <span class="navbar-brand"><%= form.title %></span>
+        <a href="/ui/admin/org/create" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">New</a>
+    </nav>
+    <table class="table">
+        <thead >
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Inactive</th>
+                <th>Token Expiration</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% list.forEach(function(org) { %>
+            <tr>
+                <td><%= org.name %></td>
+                <td><%= org.org_id %></td>
+                <td><%= org.inactive %></td>
+                <td><%= org.tokenExpiration %></td>
+                <td>
+                    <a href="/ui/admin/org/edit/<%- org.id %>" class="btn btn-primary btn-sm">
+                        <span class="fa fa-pencil-square-o" aria-label="Edit"></span>
+                    </a>
+                    <a href="/ui/admin/org/delete/<%- org.id %>" class="btn btn-primary btn-sm">
+                        <span class="fa fa-trash-o" aria-label="Remove"></span>
+                    </a>
+                </td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</main>
+
+<footer>
+<% include ../../partials/footer %>
+</footer>
+
+</body>
+</html>

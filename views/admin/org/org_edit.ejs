@@ -1,0 +1,44 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../../partials/head %>
+</head>
+<body class="container">
+
+<header>
+    <% include ../../partials/header %>
+</header>
+
+<main>
+    <h1><%= form.title %></h1>
+    <form>
+        <div class="form-group">
+            <input value="<%- org.name %>" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="orgHelp" placeholder="Organization name">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="orgCode" placeholder="Code" aria-describedby="orgCodeHelp" >
+            <small id="orgCodeHelp" class="form-text text-muted">The organization code must be unique</small>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="orgTokenDuration" placeholder="Token duration" aria-describedby="orgTokenDurationHelp" >
+            <small id="orgTokenDurationHelp" class="form-text text-muted">Accepted format: 60, 2 days, 10h, 7d</small>
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input">
+                Inactive
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</main>
+
+<footer>
+    <% include ../../partials/footer %>
+</footer>
+
+</body>
+</html>
