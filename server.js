@@ -17,7 +17,6 @@ var deleteOrgRoute = require('./route/admin/org/delete_org_route');
 var jwtFilter = require('./filter/jwt_filter');
 var orgUiListRoute = require('./route/ui/admin/org/org_list');
 var orgUiCreateEditRoute = require('./route/ui/admin/org/org_edit');
-var orgUiDeleteRoute = require('./route/ui/admin/org/org_delete');
 
 logger.level = config.logging.level;
 
@@ -94,10 +93,6 @@ uiRoutes.get('/admin/org/create', function(req, res) {
 
 uiRoutes.get('/admin/org/edit/:id', function(req, res) {
     orgUiCreateEditRoute(req,res);
-});
-
-uiRoutes.get('/admin/org/delete/:id', function(req, res) {
-    orgUiDeleteRoute(req,res);
 });
 
 app.use('/api', apiRoutes);
