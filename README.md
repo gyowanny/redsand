@@ -70,7 +70,7 @@ The current structure is like below:
 {
   "org_id": "org_id",
   "name": "Organization Name",
-  "tokenExpiration": "24h", //*Using Json Web Token standard format: 60, "2 days", "10h", "7d"*
+  "tokenExpiration": "24h", //*Using Json Web Token standard format: 60, 2 days, 10h, 7d*
   "inactive": false
 }
 ```
