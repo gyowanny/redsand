@@ -32,7 +32,7 @@ describe('Org Dao', function() {
 
     afterEach(function (done) {
         sandbox.restore();
-        r.table('users').delete().run(db.global.connection, function(err, result) {
+        r.table('orgs').delete().run(db.global.connection, function(err, result) {
             db.close();
             done();
         });
@@ -194,6 +194,27 @@ describe('Org Dao', function() {
 
                         done();
                     });
+                });
+            });
+        });
+    });
+
+    it('should return all existing orgs', function(done) {
+        var org = createDefaultOrg();
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save(org, function (err, result) {
+                expect(err).to.be.null;
+
+                instance.getAll(function (err, orgList) {
+                    expect(err).to.be.null;
+
+                    expect(orgList).to.not.be.null;
+                    expect(orgList).to.have.lengthOf(1);
+
+                    done();
                 });
             });
         });

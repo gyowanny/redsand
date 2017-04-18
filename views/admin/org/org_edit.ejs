@@ -1,0 +1,88 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../../partials/head %>
+    </head>
+    <body class="container">
+
+        <header>
+            <% include ../../partials/header %>
+        </header>
+
+        <main>
+            <div class="container">
+                <div class="card">
+                    <h3 class="card-header"><%= form.title %></h3>
+                    <div class="card-block">
+                        <form id="form" enctype="application/json" action="/admin/org">
+                            <input name="id" value="<%- org.id %>" type="hidden" class="form-control" >
+                            <div class="form-group">
+                                <label for="orgName" >Organization Name</label>
+                                <input name="name" value="<%- org.name %>" type="text" class="form-control" id="orgName" aria-describedby="orgHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="orgName" >Organization Code</label>
+                                <input name="org_id" value="<%- org.org_id %>" type="text" class="form-control" id="orgCode" aria-describedby="orgCodeHelp" >
+                                <small id="orgCodeHelp" class="form-text text-muted">The organization code must be unique</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="orgName">Token Duration</label>
+                                <input name="tokenExpiration" value="<%- org.tokenExpiration %>" type="text" class="form-control" id="orgTokenDuration" aria-describedby="orgTokenDurationHelp" >
+                                <small id="orgTokenDurationHelp" class="form-text text-muted">Accepted format: 60, 2 days, 10h, 7d</small>
+                            </div>
+                            <div class="form-group">
+                                Inactive <input name="inactive" type="checkbox" class="form-control" <%= org.inactive ? "checked" : "" %> />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <% include ../../partials/footer %>
+            <script type="text/javascript">
+
+                $(document).ready(function() {
+                    $("#form").submit(function(event) {
+                        var data = convertFormToJSON($(this));
+                        if (data.inactive === 'on') {
+                            data.inactive = true;
+                        } else if (data.inactive === 'off') {
+                            data.inactive = false;
+                        } else {
+                            data.inactive = false;
+                        }
+                        var formURL = $(this).attr("action");
+                        var config = {
+                            url: formURL + (data.id ? '/'+data.id : ''),
+                            type : data.id ? "put" : "post",
+                            dataType : 'json',
+                            data : data,
+                            encode: true,
+                            success : function(result) {
+                                console.log(result);
+                                if (result.success === true) {
+                                    window.location = '/ui/admin/org';
+                                }
+                            },
+                            error: function(xhr, resp, text) {
+                                alert(JSON.stringify(xhr.responseText).message);
+                            }
+                        };
+                        console.log(config);
+                        $.ajax(config);
+                        event.preventDefault();
+                    });
+                });
+
+            </script>
+
+        </footer>
+
+    </body>
+</html>
