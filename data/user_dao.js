@@ -63,9 +63,9 @@ module.exports =  {
 
     findByOrgId: function(orgId, callback) {
         r.table('users')
-            .filter(function(user) {
-                    return user('org_id').contains(orgId);
-                })
+            .filter(r.row('orgs').contains(function(org) {
+                return org('org_id').eq(orgId);
+            }))
             .run(db.global.connection, function(err, cursor) {
                if (err) {
                    callback(err, null);

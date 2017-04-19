@@ -29,6 +29,15 @@ var getTokenExpirationFromOrgOrDefaultFromConfig = function(org) {
     }
 }
 
+var getRolesForOrg = function(user, orgId) {
+    for(var i = 0; i < user.orgs.length; i++) {
+        if (user.orgs[i].org_id === orgId) {
+            return user.orgs[i].roles;
+        }
+    }
+    return [];
+}
+
 module.exports = function(req, res) {
     var decodedPayload = decodePayloadFromBase64ToUtf8Array(req.body.auth);
     var decodedLogin = decodedPayload[0];
@@ -49,8 +58,9 @@ module.exports = function(req, res) {
         }
 
         var passwordMatches = passwordService.matches(decodedPassword, userFound.password);
+        var rolesForRequestOrg = getRolesForOrg(userFound, requestedOrgId);
 
-        if (passwordMatches == true && userFound.org_id.indexOf(requestedOrgId) > -1) {
+        if (passwordMatches == true && rolesForRequestOrg.length > 0) {
             orgDao.findByOrgId(requestedOrgId, function(err, orgFound) {
                 var tokenExpiration = getTokenExpirationFromOrgOrDefaultFromConfig(orgFound);
 
@@ -63,7 +73,7 @@ module.exports = function(req, res) {
                 // returns the information including token as JSON
                 var response = createResponseAsJson(true, 'AUTHORIZED');
                 response.token = token;
-                response.roles = userFound.roles;
+                response.roles = rolesForRequestOrg;
                 res.json(response);
             });
 

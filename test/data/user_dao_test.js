@@ -21,8 +21,12 @@ describe('User Dao', function() {
             password: 'password',
             email: 'user@user.com',
             fullName: 'full name',
-            roles: ['ROLE_1','ROLE_2','ROLE_3','ROLE_4'],
-            org_id: ['org_id'],
+            orgs: [
+                    {
+                        org_id: 'org_id',
+                        roles: ['ROLE1', 'ROLE_2', 'ROLE_3', 'ROLE_4']
+                    }
+                ],
             create_date: new Date()
         };
     };
@@ -62,7 +66,7 @@ describe('User Dao', function() {
 
         var user2 = createDefaultUser();
         user2.login = 'login2';
-        user2.org_id = ['another_org_id'];
+        user2.orgs[0].org_id = 'another_org_id';
 
         var orgId = 'org_id';
         var userArray = [user1, user2];
@@ -79,7 +83,6 @@ describe('User Dao', function() {
                     expect(err).to.be.null;
                     expect(users).to.be.a('array');
                     expect(users).to.have.lengthOf(1);
-                    expect(users[0].org_id).to.contains(orgId);
 
                     done();
                 });
@@ -139,7 +142,7 @@ describe('User Dao', function() {
                     expect(user).to.not.be.null;
                     expect(user.id).to.not.be.null;
 
-                    user.roles[0] = 'UPDATED_ROLE';
+                    user.orgs[0].roles[0] = 'UPDATED_ROLE';
 
                     instance.save(user, function(err, result) {
                         expect(err).to.be.null;
@@ -147,7 +150,7 @@ describe('User Dao', function() {
                         instance.findByLogin(user.login, function(err, user) {
                             expect(err).to.be.null;
                             expect(user).to.not.be.null;
-                            expect(user.roles).to.contains('UPDATED_ROLE');
+                            expect(user.orgs[0].roles).to.contains('UPDATED_ROLE');
 
                             done();
                         });
