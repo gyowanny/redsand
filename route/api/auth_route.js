@@ -47,7 +47,7 @@ module.exports = function(req, res) {
     userDao.findByLogin(decodedLogin, function(err, userFound) {
 
         if (err) {
-            logger.log('error', 'login not authorized for user %s', decodedLogin);
+            logger.log('error', 'login error for user %s', decodedLogin);
             res.status(500).json(createResponseAsJson(false, 'ERROR \n'+JSON.stringify(err)));
         }
 
@@ -58,9 +58,8 @@ module.exports = function(req, res) {
         }
 
         var passwordMatches = passwordService.matches(decodedPassword, userFound.password);
-        var rolesForRequestOrg = getRolesForOrg(userFound, requestedOrgId);
 
-        if (passwordMatches == true && rolesForRequestOrg.length > 0) {
+        if (passwordMatches == true) {
             orgDao.findByOrgId(requestedOrgId, function(err, orgFound) {
                 var tokenExpiration = getTokenExpirationFromOrgOrDefaultFromConfig(orgFound);
 
@@ -73,7 +72,7 @@ module.exports = function(req, res) {
                 // returns the information including token as JSON
                 var response = createResponseAsJson(true, 'AUTHORIZED');
                 response.token = token;
-                response.roles = rolesForRequestOrg;
+                response.roles = getRolesForOrg(userFound, requestedOrgId);
                 res.json(response);
             });
 
