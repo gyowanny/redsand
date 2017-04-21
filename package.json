@@ -42,6 +42,7 @@
     "chai": "3.5.0",
     "chai-http": "3.0.0",
     "mocha": "3.2.0",
+    "mock-express-request": "0.2.0",
     "proxyquire": "1.7.11",
     "sinon": "1.17.7",
     "sinon-chai": "2.9.0"

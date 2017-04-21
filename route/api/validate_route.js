@@ -7,7 +7,7 @@ module.exports = function(req, res) {
     var token = req.body.token;
 
     if (!token) {
-        res.status(403).send('Invalid body');
+        res.status(403).send('INVALID_BODY');
         return;
     }
 
@@ -18,13 +18,13 @@ module.exports = function(req, res) {
         }
 
         if (user) {
-            if (_.isEqual(decoded.user, user)) {
-                res.status(204).send();
-            } else {
+            if (!_.isEqual(decoded.user, user)) {
                 res.status(403).send();
+                return;
             }
-        } else {
-            res.status(204).send();
         }
+
+        res.status(204).send();
+
     });
 }

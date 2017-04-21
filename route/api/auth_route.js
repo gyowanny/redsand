@@ -35,7 +35,7 @@ var getRolesForOrg = function(user, orgId) {
             return user.orgs[i].roles;
         }
     }
-    return [];
+    return null;
 }
 
 module.exports = function(req, res) {
@@ -48,7 +48,7 @@ module.exports = function(req, res) {
 
         if (err) {
             logger.log('error', 'login error for user %s', decodedLogin);
-            res.status(500).json(createResponseAsJson(false, 'ERROR \n'+JSON.stringify(err)));
+            res.status(500).json(createResponseAsJson(false, JSON.stringify(err)));
         }
 
         if (!userFound) {
@@ -58,9 +58,22 @@ module.exports = function(req, res) {
         }
 
         var passwordMatches = passwordService.matches(decodedPassword, userFound.password);
+        var rolesForRequestedOrg = getRolesForOrg(userFound, requestedOrgId);
 
-        if (passwordMatches == true) {
+        if (passwordMatches == true && rolesForRequestedOrg) {
             orgDao.findByOrgId(requestedOrgId, function(err, orgFound) {
+                if (!orgFound) {
+                    logger.log('warn', 'User %s tried to login in an non-existent org %s', decodedLogin, requestedOrgId);
+                    res.status(403).json(createResponseAsJson(false, 'UNAUTHORIZED'));
+                    return;
+                }
+
+                if (orgFound.inactive === true) {
+                    logger.log('warn', 'User %s tried to login in an inactive org %s', decodedLogin, orgFound.org_id);
+                    res.status(403).json(createResponseAsJson(false, 'UNAUTHORIZED'));
+                    return;
+                }
+
                 var tokenExpiration = getTokenExpirationFromOrgOrDefaultFromConfig(orgFound);
 
                 //Removing the password field before encoding
@@ -72,7 +85,7 @@ module.exports = function(req, res) {
                 // returns the information including token as JSON
                 var response = createResponseAsJson(true, 'AUTHORIZED');
                 response.token = token;
-                response.roles = getRolesForOrg(userFound, requestedOrgId);
+                response.roles = rolesForRequestedOrg;
                 res.json(response);
             });
 
