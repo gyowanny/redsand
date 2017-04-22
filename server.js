@@ -2,6 +2,8 @@ const logger = require('winston');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var favicon = require('serve-favicon')
+var path = require('path')
 var morgan = require('morgan');
 var config = require('./config.js');
 var dbSetup = require('./data/db');
@@ -22,6 +24,8 @@ logger.level = config.logging.level;
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+// app.use(favicon(path.join('views', 'public', 'img', 'favicon.ico')));
+app.set('public', path.join(__dirname, 'views', 'public'));
 app.set('views', __dirname+'/views');
 app.set('view engine', 'ejs');
 

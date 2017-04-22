@@ -16,21 +16,6 @@ describe('ADMIN - Create org route', function() {
 
     var instance;
 
-    var createOrg = function(callback) {
-        var org = {
-            org_id: "org_id",
-            name: "Simple App Test",
-            tokenExpiration: "24h",
-            inactive: false
-        }
-
-        orgDao.save(org, function(err, result) {
-            expect(err).to.be.null;
-
-            callback(result);
-        })
-    };
-
     beforeEach(function (done) {
         instance = require('../../../../route/admin/org/create_org_route');
         db.init(config, function(err, connection) {

@@ -18,13 +18,14 @@ module.exports = function(req, res) {
     orgDao.findById(id, function(err, org) {
 
         if(err) {
-            logger.log('Can not find org by ID [%s] \n %s', id, err);
-            res.status(400).json(createResponseAsJson(false, 'Can not find org by ID. \n'+err));
+            logger.log('error', 'An error occurred while searching for org with ID [%s] \n %s', id, err);
+            res.status(500).json(createResponseAsJson(false, 'Can not find org by ID. \n'+err));
             return;
         }
 
         if (!org) {
-            res.status(400).json(createResponseAsJson(false, 'Org not found'));
+            logger.log('warn', 'Org with ID [%s] not found', id);
+            res.status(400).json(createResponseAsJson(false, 'NOT_FOUND'));
             return;
         }
 
@@ -36,7 +37,7 @@ module.exports = function(req, res) {
 
         orgDao.save(orgChanges, function(err, result) {
             if (err) {
-                logger.log('Can not update org with ID [%s] \n %s', id, err);
+                logger.log('error', 'An error occurred while updating org with ID [%s] \n %s', id, err);
                 res.status(500).json(createResponseAsJson(false, 'Can not update org with ID. \n'+err));
                 return;
             }
