@@ -54,7 +54,7 @@ describe('API - Authentication route', function() {
 
             callback(result);
         })
-    }
+    };
 
     beforeEach(function (done) {
         instance = require('../../../route/api/auth_route');
@@ -70,7 +70,7 @@ describe('API - Authentication route', function() {
                 done();
             });
         });
-    })
+    });
 
     it('should authenticate an existing user', function (done) {
         //Given
