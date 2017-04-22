@@ -23,7 +23,7 @@ describe('Org Dao', function() {
             tokenExpiration: '24h',
             inactive: false
         };
-    }
+    };
 
     beforeEach(function () {
         instance = require('../../data/org_dao');

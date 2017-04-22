@@ -1,13 +1,15 @@
 var db = require('./db');
 var r = require('rethinkdb');
 
+const TABLE = db.global.tables.users;
+
 module.exports =  {
 
     save: function(user, callback) {
         if (user.id) {
             var id = user.id;
             delete user.id;
-            r.table('users').get(id).update(user).run(db.global.connection, function(err, result) {
+            r.table(TABLE).get(id).update(user).run(db.global.connection, function(err, result) {
                 if (err) {
                     callback(err, 'ERROR');
                     return;
@@ -17,7 +19,7 @@ module.exports =  {
             });
         } else {
             user.create_date = new Date().toISOString();
-            r.table('users').insert(user).run(db.global.connection, function (err, result) {
+            r.table(TABLE).insert(user).run(db.global.connection, function (err, result) {
                 if (err) {
                     callback(err, 'ERROR');
                     return;
@@ -29,7 +31,7 @@ module.exports =  {
     },
 
     loginExists: function(login) {
-        return r.table('users')('login').count(login).run(db.global.connection, function(err, count) {
+        return r.table(TABLE)('login').count(login).run(db.global.connection, function(err, count) {
            if (err) {
                throw err;
            }
@@ -39,7 +41,7 @@ module.exports =  {
     },
 
     findByLogin: function(userLogin, callback) {
-        r.table('users').filter({login: userLogin}).run(db.global.connection, function(err, cursor) {
+        r.table(TABLE).filter({login: userLogin}).run(db.global.connection, function(err, cursor) {
            if (err) {
                callback(err, null);
                return;
@@ -62,7 +64,7 @@ module.exports =  {
     },
 
     findByOrgId: function(orgId, callback) {
-        r.table('users')
+        r.table(TABLE)
             .filter(r.row('orgs').contains(function(org) {
                 return org('org_id').eq(orgId);
             }))
@@ -77,7 +79,7 @@ module.exports =  {
     },
 
     findById: function(id, callback) {
-        r.table('users').get(id).run(db.global.connection, function(err, user) {
+        r.table(TABLE).get(id).run(db.global.connection, function(err, user) {
             if (err) {
                 callback(err, null);
                 return;
@@ -87,7 +89,7 @@ module.exports =  {
     },
 
     delete: function(id, callback) {
-        r.table('users').get(id).delete().run(db.global.connection, function(err, result) {
+        r.table(TABLE).get(id).delete().run(db.global.connection, function(err, result) {
            if (err) {
                callback(err, null);
                return;

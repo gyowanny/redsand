@@ -2,10 +2,17 @@ var async = require('async');
 var r = require('rethinkdb');
 const logger = require('winston');
 
+
+
 module.exports = {
 
     global: {
-        connection: null
+        connection: null,
+        tables: {
+            users: 'users',
+            orgs: 'orgs',
+            logs: 'logs'
+        }
     },
 
     init: function(config, callbackInit) {
@@ -57,6 +64,19 @@ module.exports = {
                 });
             },
 
+            function createTableLogs(connection, callback) {
+                //Create the table if needed.
+                r.tableList().contains('logs').do(function(containsTable) {
+                    return r.branch(
+                        containsTable,
+                        {created: 0},
+                        r.tableCreate('logs')
+                    );
+                }).run(connection, function(err) {
+                    callback(err, connection);
+                });
+            },
+
             function createUserLoginIndex(connection, callback) {
                 //Create the index if needed.
                 r.table('users').indexList().contains('login').do(function(hasIndex) {
@@ -90,9 +110,24 @@ module.exports = {
                 });
             }
         ], callbackInit);
+
+        function createTableIfNeeded (table, connection, callback) {
+            console.log('### Creating table -> ', table);
+            //Create the table if needed.
+            r.tableList().contains(table).do(function(containsTable) {
+                return r.branch(
+                    containsTable,
+                    {created: 0},
+                    r.tableCreate(table)
+                );
+            }).run(connection, function(err) {
+                callback(err, connection);
+            });
+        };
     },
 
     close: function() {
+        logger.log('info', 'Closing database connection');
         this.global.connection.close(function(err) {if (err) throw err});
         this.global.connection = null;
     }

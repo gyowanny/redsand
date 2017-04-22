@@ -24,8 +24,7 @@ logger.level = config.logging.level;
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-// app.use(favicon(path.join('views', 'public', 'img', 'favicon.ico')));
-app.set('public', path.join(__dirname, 'views', 'public'));
+app.use(favicon(path.join('views','public','img', 'favicon.ico')));
 app.set('views', __dirname+'/views');
 app.set('view engine', 'ejs');
 
@@ -83,6 +82,10 @@ adminRoutes.delete('/org/:id', function(req, res) {
 // UI mappings
 var uiRoutes = express.Router();
 
+uiRoutes.get('/admin/login', function(req, res) {
+    res.render('admin/login.ejs');
+});
+
 uiRoutes.get('/admin', function(req, res) {
     res.render('admin/index');
 });
@@ -102,7 +105,9 @@ uiRoutes.get('/admin/org/edit/:id', function(req, res) {
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
 app.use('/ui', uiRoutes);
-app.use('/js', express.static('views/js'))
+app.use('/js', express.static('views/js'));
+app.use('/css', express.static('views/css'));
+app.use('/img', express.static('views/public/img'));
 
 //App startup
 dbSetup.init(config, function(err, connection) {
