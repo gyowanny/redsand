@@ -2,7 +2,8 @@ const logger = require('winston');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var favicon = require('serve-favicon')
+var session = require('express-session');
+var favicon = require('serve-favicon');
 var path = require('path')
 var morgan = require('morgan');
 var config = require('./config.js');
@@ -19,11 +20,18 @@ var deleteOrgRoute = require('./route/admin/org/delete_org_route');
 var jwtFilter = require('./filter/jwt_filter');
 var orgUiListRoute = require('./route/ui/admin/org/org_list');
 var orgUiCreateEditRoute = require('./route/ui/admin/org/org_edit');
+var tokenService = require('./service/token_service');
+var loginAuth = require('./route/ui/admin/login');
 
 logger.level = config.logging.level;
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(session({
+    resave: false, // don't save session if unmodified
+    saveUninitialized: false, // don't create session until something stored
+    secret: config.secretKey
+}));
 app.use(favicon(path.join('views','public','img', 'favicon.ico')));
 app.set('views', __dirname+'/views');
 app.set('view engine', 'ejs');
@@ -82,23 +90,52 @@ adminRoutes.delete('/org/:id', function(req, res) {
 // UI mappings
 var uiRoutes = express.Router();
 
+function restrict(req, res, next) {
+    var loggedUser = req.session.user;
+    if (loggedUser && tokenService.isValid(loggedUser.token, config.secretKey)) {
+        logger.log('debug', 'User contains valid token');
+        next();
+    } else {
+        logger.log('error', 'User not authorized');
+        req.session.error = 'Access denied!';
+        res.redirect('/ui/admin/login');
+    }
+}
+
 uiRoutes.get('/admin/login', function(req, res) {
     res.render('admin/login.ejs');
 });
 
-uiRoutes.get('/admin', function(req, res) {
+uiRoutes.post('/admin/login/auth', function(req, res) {
+    loginAuth(req, res, function(err, result) {
+        if (err) {
+            res.render('admin/login.ejs', err);
+            return;
+        }
+
+        res.json({success: true, message: "logged in"});
+    });
+});
+
+uiRoutes.get('/admin/logout', function(req, res) {
+    req.session.destroy(function(){
+        res.redirect('/ui/admin/login')
+    });
+});
+
+uiRoutes.get('/admin', restrict, function(req, res) {
     res.render('admin/index');
 });
 
-uiRoutes.get('/admin/org', function(req, res) {
+uiRoutes.get('/admin/org', restrict, function(req, res) {
     orgUiListRoute(req, res);
 });
 
-uiRoutes.get('/admin/org/create', function(req, res) {
+uiRoutes.get('/admin/org/create', restrict, function(req, res) {
     orgUiCreateEditRoute(req,res);
 });
 
-uiRoutes.get('/admin/org/edit/:id', function(req, res) {
+uiRoutes.get('/admin/org/edit/:id', restrict, function(req, res) {
     orgUiCreateEditRoute(req,res);
 });
 

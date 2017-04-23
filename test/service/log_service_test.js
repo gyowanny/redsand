@@ -28,10 +28,12 @@ describe('Log service', function() {
         // Given
         var login = 'user_login';
         var orgId = 'org_id';
+        var ip = '127.0.0.1';
         logDaoMock = sandbox.stub(logDao, 'save').callsFake(function(log, callback) {
             expect(log).to.not.be.null;
             expect(log.subject).to.be.equal('AUTHENTICATION')
             expect(log.org_id).to.be.equal(orgId);
+            expect(log.ip).to.be.equal(ip);
             expect(log.data).to.not.be.null;
             expect(log.data.login).to.be.equal(login);
             expect(log.timestamp).to.not.be.null;
@@ -41,7 +43,7 @@ describe('Log service', function() {
         instance = proxyquire('../../service/log_service', {logDao: logDaoMock});
 
         // When
-        instance.logUserAuthentication(login, orgId, function(err, result) {
+        instance.logUserAuthentication(login, orgId, ip, function(err, result) {
 
             // Then
             expect(err).to.be.null;

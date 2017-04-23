@@ -27,5 +27,9 @@ module.exports = {
 
             callback(null, decoded);
         });
+    },
+
+    isValid: function(token, key) {
+        return jsonWebToken.verify(token, key);
     }
 }

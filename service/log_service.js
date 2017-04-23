@@ -1,10 +1,11 @@
 var logDao = require('../data/log_dao');
 
 module.exports = {
-    logUserAuthentication: function(login, orgId, callback) {
+    logUserAuthentication: function(login, orgId, ip, callback) {
         var log = {
             subject: 'AUTHENTICATION',
             org_id: orgId,
+            ip: ip,
             data: {
                 login: login
             },
