@@ -2,8 +2,6 @@ var async = require('async');
 var r = require('rethinkdb');
 const logger = require('winston');
 
-
-
 module.exports = {
 
     global: {
@@ -75,6 +73,29 @@ module.exports = {
                 }).run(connection, function(err) {
                     callback(err, connection);
                 });
+            },
+
+            function createAdminUserIfNeeded(connection, callback) {
+                var adminUser = {
+                    create_date:  "" ,
+                    email: "admin@redsand.com",
+                    fullName:  "Administrator" ,
+                    login:  "admin" ,
+                    orgs: [
+                    {
+                        org_id:  "redsand_admin" ,
+                        roles: [
+                            "ADMIN"
+                        ]
+                    }] ,
+                    password:  "$2a$10$ySzFi4bSkbqhxByfWQPZkOkinWnJ.BJpKv83P34Pc1Z3jRgNI7fnO"
+                };
+                r. table('users')('org_id').count('redsand_admin').run(connection, function(err) {
+                    r.table('users').insert(adminUser).run(connection, function(err) {
+                        callback(err, connection);
+                    });
+                });
+
             },
 
             function createUserLoginIndex(connection, callback) {
