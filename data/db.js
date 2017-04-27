@@ -90,10 +90,14 @@ module.exports = {
                     }] ,
                     password:  "$2a$10$ySzFi4bSkbqhxByfWQPZkOkinWnJ.BJpKv83P34Pc1Z3jRgNI7fnO"
                 };
-                r. table('users')('org_id').count('redsand_admin').run(connection, function(err) {
-                    r.table('users').insert(adminUser).run(connection, function(err) {
+                r. table('users')('login').count('admin').run(connection, function(err, count) {
+                    if (count === 0) {
+                        r.table('users').insert(adminUser).run(connection, function (err) {
+                            callback(err, connection);
+                        });
+                    }else {
                         callback(err, connection);
-                    });
+                    }
                 });
 
             },

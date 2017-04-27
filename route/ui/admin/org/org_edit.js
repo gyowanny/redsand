@@ -17,7 +17,7 @@ module.exports = function(req, res) {
 
     if (id) {
         orgDao.findById(id, function(err, orgFound){
-            renderForm("Edit Organization", orgFound, res);
+            renderForm("Edit Application", orgFound, res);
         });
     } else {
         var newOrg = {
@@ -27,7 +27,7 @@ module.exports = function(req, res) {
             tokenExpiration: null,
             inactive: false
         }
-        renderForm("New Organization", newOrg, res);
+        renderForm("New Application", newOrg, res);
     }
 
 }

@@ -4,7 +4,7 @@ module.exports = function(req, res) {
     orgDao.getAll(function(err, orgList) {
         var formData = {
             form: {
-                title: 'Organizations',
+                title: 'Applications',
             },
             list: orgList
         }

@@ -30,13 +30,13 @@ module.exports =  {
         }
     },
 
-    loginExists: function(login) {
-        return r.table(TABLE)('login').count(login).run(db.global.connection, function(err, count) {
+    loginExists: function(login, callback) {
+        r.table(TABLE)('login').count(login).run(db.global.connection, function(err, count) {
            if (err) {
                throw err;
            }
 
-           return Boolean(count > 0);
+           callback(Boolean(count > 0));
         });
     },
 
@@ -100,6 +100,17 @@ module.exports =  {
            } else {
                callback(null, 'NOT_FOUND');
            }
+        });
+    },
+
+    getAll: function(callback) {
+        r.table(TABLE).run(db.global.connection, function(err, cursor) {
+            if (err) {
+                callback(err, null);
+                return;
+            }
+
+            cursor.toArray(callback);
         });
     }
 

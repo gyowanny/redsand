@@ -2,6 +2,7 @@ const logger = require('winston');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var helmet = require('helmet');
 var session = require('express-session');
 var favicon = require('serve-favicon');
 var path = require('path')
@@ -20,6 +21,8 @@ var deleteOrgRoute = require('./route/admin/org/delete_org_route');
 var jwtFilter = require('./filter/jwt_filter');
 var orgUiListRoute = require('./route/ui/admin/org/org_list');
 var orgUiCreateEditRoute = require('./route/ui/admin/org/org_edit');
+var userUiListRoute = require('./route/ui/admin/user/user_list');
+var userUiCreateEditRoute = require('./route/ui/admin/user/user_edit');
 var tokenService = require('./service/token_service');
 var loginAuth = require('./route/ui/admin/login');
 
@@ -37,6 +40,7 @@ app.set('views', __dirname+'/views');
 app.set('view engine', 'ejs');
 
 app.use(morgan('dev'));
+app.use(helmet());
 
 app.get('/api', function(req, res) {
     res.send('Hello! This is Red Sand Authentication API.');
@@ -55,9 +59,9 @@ apiRoutes.post('/validate', function(req, res) {
 var adminRoutes = express.Router();
 
 //Activates the json web token filter for production environment
-if (process.env.NODE_ENV === 'PROD') {
+// if (process.env.NODE_ENV === 'production') {
     adminRoutes.use(jwtFilter);
-}
+// }
 
 adminRoutes.post('/user', function(req, res) {
     createUserRoute(req, res);
@@ -109,11 +113,11 @@ uiRoutes.get('/admin/login', function(req, res) {
 uiRoutes.post('/admin/login/auth', function(req, res) {
     loginAuth(req, res, function(err, result) {
         if (err) {
-            res.render('admin/login.ejs', err);
+            res.status(403).render('admin/login.ejs', err);
             return;
         }
 
-        res.json({success: true, message: "logged in"});
+        res.json({success: true, message: result});
     });
 });
 
@@ -137,6 +141,18 @@ uiRoutes.get('/admin/org/create', restrict, function(req, res) {
 
 uiRoutes.get('/admin/org/edit/:id', restrict, function(req, res) {
     orgUiCreateEditRoute(req,res);
+});
+
+uiRoutes.get('/admin/user', restrict, function(req, res) {
+    userUiListRoute(req, res);
+});
+
+uiRoutes.get('/admin/user/create', restrict, function(req, res) {
+    userUiCreateEditRoute(req,res);
+});
+
+uiRoutes.get('/admin/user/edit/:id', restrict, function(req, res) {
+    userUiCreateEditRoute(req,res);
 });
 
 app.use('/api', apiRoutes);

@@ -1,9 +1,12 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <% include ../../partials/head %>
+        <style>
+            .margin-right-3px {margin-right: 5px}
+            .margin-right-10px {margin-right: 10px}
+            .bold-text {font-weight: bold}
+        </style>
     </head>
     <body class="container">
 
@@ -16,24 +19,36 @@
                 <div class="card">
                     <h3 class="card-header"><%= form.title %></h3>
                     <div class="card-block">
-                        <form id="form" enctype="application/json" action="/admin/org">
-                            <input name="id" value="<%- org.id %>" type="hidden" class="form-control" >
+                        <form id="form" enctype="application/json" action="/admin/user">
+                            <input name="id" value="<%- user.id %>" type="hidden" class="form-control" >
                             <div class="form-group">
-                                <label for="orgName" >Name</label>
-                                <input name="name" value="<%- org.name %>" type="text" class="form-control" id="orgName" aria-describedby="orgHelp">
+                                <label for="fullName" >Full name</label>
+                                <input id="fullName" name="fullName" value="<%- user.fullName %>" type="text" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="orgName" >Code</label>
-                                <input name="org_id" value="<%- org.org_id %>" type="text" class="form-control" id="orgCode" aria-describedby="orgCodeHelp" >
-                                <small id="orgCodeHelp" class="form-text text-muted">The organization code must be unique</small>
+                                <label for="email">E-mail</label>
+                                <input id="email" name="email" value="<%- user.email %>" type="text" class="form-control" >
                             </div>
                             <div class="form-group">
-                                <label for="orgName">Token Duration</label>
-                                <input name="tokenExpiration" value="<%- org.tokenExpiration %>" type="text" class="form-control" id="orgTokenDuration" aria-describedby="orgTokenDurationHelp" >
-                                <small id="orgTokenDurationHelp" class="form-text text-muted">Accepted format: 60, 2 days, 10h, 7d</small>
+                                <label for="login">Login</label>
+                                <input id="login" name="login" value="<%- user.login %>" type="text" class="form-control" >
                             </div>
                             <div class="form-group">
-                                <input id="inactive" name="inactive" type="checkbox" class="form-control" data-toggle="toggle" data-onstyle="danger" data-offstyle="primary" <%= org.inactive == true ? "checked" : "" %> />
+                                <label for="password">Password</label>
+                                <input id="password" name="password" value="<%- user.password %>" type="password" class="form-control" >
+                            </div>
+                            <div class="form-group">
+                                <label >Orgs / Roles</label>
+                                <ul class="list-group">
+                                <% user.orgs.forEach(function(org) { %>
+                                    <li class="list-group-item">
+                                        <span class="margin-right-10px bold-text"><%= org.org_id %></span>
+                                        <% org.roles.forEach(function(role) { %>
+                                        <span class="badge badge-default margin-right-3px"><%= role %></span>
+                                        <% }); %>
+                                    </li>
+                                <% }); %>
+                                </ul>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Save</button>
@@ -46,20 +61,10 @@
         <footer class="footer">
             <% include ../../partials/footer %>
             <script type="text/javascript">
-                $('#inactive').bootstrapToggle({
-                    on: 'Inactive',
-                    off: 'Active'
-                });
+
                 $(document).ready(function() {
                     $("#form").submit(function(event) {
                         var data = convertFormToJSON($(this));
-                        if (data.inactive === 'on') {
-                            data.inactive = true;
-                        } else if (data.inactive === 'off') {
-                            data.inactive = false;
-                        } else {
-                            data.inactive = false;
-                        }
                         var formURL = $(this).attr("action");
                         var config = {
                             headers: {"x-access-token": getTokenFromSessionStorage()},
@@ -71,7 +76,7 @@
                             success : function(result) {
                                 console.log(result);
                                 if (result.success === true) {
-                                    window.location = '/ui/admin/org';
+                                    window.location = '/ui/admin/user';
                                 }
                             },
                             error: function(xhr, resp, text) {

@@ -12,7 +12,7 @@
 <main>
     <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
         <span class="navbar-brand"><%= form.title %></span>
-        <a href="/ui/admin/org/create" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">
+        <a href="/ui/admin/user/create" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">
             <span class="fa fa-plus" aria-label="New"></span>
             New
         </a>
@@ -20,28 +20,37 @@
     <table class="table">
         <thead >
             <tr>
-                <th>Name</th>
-                <th>Code</th>
-                <th>Inactive</th>
-                <th>Token Expiration</th>
+                <th>Full name</th>
+                <th>Login</th>
+                <th>E-mail</th>
+                <th>Orgs</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            <% list.forEach(function(org) { %>
+            <% list.forEach(function(appUser) { %>
             <tr>
-                <td><%= org.name %></td>
-                <td><%= org.org_id %></td>
-                <td><%= org.inactive %></td>
-                <td><%= org.tokenExpiration %></td>
+                <td><%= appUser.fullName %></td>
+                <td><%= appUser.login %></td>
+                <td><%= appUser.email %></td>
                 <td>
-                    <a href="/ui/admin/org/edit/<%- org.id %>" class="btn btn-primary btn-sm">
+                    <% appUser.orgs.forEach(function(org) {%>
+                    <span class="badge badge-default badge-pill"><%= org.org_id %></span>
+                    <% }); %>
+                </td>
+                <td>
+                    <a href="/ui/admin/user/edit/<%- appUser.id %>" class="btn btn-primary btn-sm">
                         <span class="fa fa-pencil-square-o" aria-label="Edit"></span>
                     </a>
-                    <a onclick="deleteOrg('<%- org.id %>')" href="#" class="btn btn-primary btn-sm">
+                    <a onclick="roles('<%- appUser.id %>')" href="#" class="btn btn-primary btn-sm">
+                        <span class="fa fa fa-id-card" aria-label="Roles"></span>
+                    </a>
+                    <a onclick="deleteOrg('<%- appUser.id %>')" href="#" class="btn btn-danger btn-sm">
                         <span class="fa fa-trash-o" aria-label="Remove"></span>
                     </a>
+
                 </td>
+
             </tr>
             <% }); %>
         </tbody>
@@ -51,15 +60,15 @@
 <footer class="footer">
 <% include ../../partials/footer %>
     <script type="text/javascript">
-        function deleteOrg(orgId) {
-            bootbox.confirm("Do you really wish to delete the app?", function(confirmed){
+        function deleteOrg(userId) {
+            bootbox.confirm("Do you really wish to delete the user?", function(confirmed){
                 if (confirmed) {
                     var config = {
                         headers: {"x-access-token": getTokenFromSessionStorage()},
-                        url: "/admin/org/"+orgId,
+                        url: "/admin/user/"+userId,
                         type : "delete",
                         success : function(result) {
-                            window.location = '/ui/admin/org';
+                            window.location = '/ui/admin/user';
                         },
                         error: function(xhr, resp, text) {
                             bootbox.alert({
@@ -68,6 +77,7 @@
                             });
                         }
                     };
+                    console.log(config);
                     $.ajax(config);
                 }
             });

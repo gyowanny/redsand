@@ -1,14 +1,14 @@
 var jwt = require("jsonwebtoken");
 var config = require("../config.js");
 
-var extractTokenFromRequisition = function(req) {
-    return req.body.token || req.query.token || req.headers['x-access-token'];
+var extractTokenFromRequest = function(req) {
+    return req.headers['x-access-token'] || req.body.token || req.query.token;
 }
 
 module.exports = function(req, res, next) {
 
     // check header or url parameters or post parameters for token
-    var token = extractTokenFromRequisition(req);
+    var token = extractTokenFromRequest(req);
 
     // decode token
     if (token) {
@@ -21,17 +21,16 @@ module.exports = function(req, res, next) {
                 // if token is valid then save it in the request for use in other routes
                 req.decoded = decoded;
                 next();
-                return;
             }
         });
 
+    } else {
+
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
     }
-
-    // if there is no token
-    // return an error
-    return res.status(403).send({
-        success: false,
-        message: 'No token provided.'
-    });
-
 };

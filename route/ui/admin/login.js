@@ -14,6 +14,6 @@ module.exports = function(req, res, callback){
             roles: result.roles
         };
 
-        callback(null, 'AUTHORIZED');
+        callback(null, req.session.user);
     });
 }

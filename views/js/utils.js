@@ -12,3 +12,7 @@ function convertFormToJSON(form){
 
     return json;
 }
+
+function getTokenFromSessionStorage() {
+    return JSON.parse(window.sessionStorage.getItem('user')).token;
+}

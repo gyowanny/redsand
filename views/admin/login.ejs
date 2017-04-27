@@ -18,8 +18,11 @@
                         <h1 class="text-center login-title">Sign in to continue to Redsand Admin</h1>
                         <div class="account-wall">
                             <img class="profile-img" src="/img/round-padlock-120.png" alt="">
+                            <div class="alert alert-danger marging-left-right-5px" role="alert">
+                                <strong>Invalid credentials</strong>, verify...
+                            </div>
                             <form id="form" enctype="application/json" class="form-signin" action="/ui/admin/login/auth">
-                                <input name="login" type="text" class="form-control" placeholder="Login" required autofocus>
+                                <input id="login" name="login" type="text" class="form-control" placeholder="Login" required autofocus>
                                 <input name="password" type="password" class="form-control" placeholder="Password" required>
                                 <button class="btn btn-lg btn-primary btn-block" type="submit">
                                     Sign in</button>
@@ -29,6 +32,7 @@
                                 </label>
                                 <a href="#" class="pull-right need-help">Need help? </a><span class="clearfix"></span>
                             </form>
+
                         </div>
                         <a href="#" class="text-center new-account">Create an account </a>
                     </div>
@@ -42,6 +46,7 @@
         <script type="text/javascript">
 
             $(document).ready(function() {
+                $(".alert").hide();
                 $("#form").submit(function(event) {
                     var rawForm = convertFormToJSON($(this));
                     var payload = JSON.stringify({
@@ -59,13 +64,15 @@
                         data: payload,
                         encode: true,
                         success : function(result) {
-                            console.log(result);
                             if (result.success === true) {
+                                window.sessionStorage.setItem('user', JSON.stringify(result.message));
                                 window.location = '/ui/admin';
+                            } else {
+                                showLoginFailedAlert();
                             }
                         },
                         error: function(xhr, resp, text) {
-                            alert(JSON.stringify(xhr.responseText));
+                            showLoginFailedAlert();
                         }
                     };
                     $.ajax(config);
@@ -73,6 +80,12 @@
                 });
             });
 
+            function showLoginFailedAlert() {
+                $("#login").focus();
+                $(".alert").fadeTo(2000, 500).slideUp(500, function(){
+                    $(".alert").slideUp(500);
+                });
+            }
         </script>
 
     </footer>

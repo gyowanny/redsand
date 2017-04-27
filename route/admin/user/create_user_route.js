@@ -15,7 +15,8 @@ var createResponseAsJson = function(isSuccess, message) {
 module.exports = function(req, res) {
     var user = req.body;
 
-    userDao.loginExists(user.login).then(function(exists) {
+
+    userDao.loginExists(user.login, function(exists) {
 
         if (exists) {
             logger.log('warn', 'Can not create user. Login %s already exists', user.login);
@@ -24,6 +25,9 @@ module.exports = function(req, res) {
         }
 
         user.password = passwordService.encrypt(user.password, config.password.saltRounds);
+        if (!user.orgs) {
+            user.orgs = [];
+        }
         userDao.save(user, function(err, result) {
             if (err) {
                 logger.log('err', err);
