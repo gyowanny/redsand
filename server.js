@@ -23,6 +23,7 @@ var orgUiListRoute = require('./route/ui/admin/org/org_list');
 var orgUiCreateEditRoute = require('./route/ui/admin/org/org_edit');
 var userUiListRoute = require('./route/ui/admin/user/user_list');
 var userUiCreateEditRoute = require('./route/ui/admin/user/user_edit');
+var userUiEditRolesRoute = require('./route/ui/admin/user/user_roles_edit');
 var tokenService = require('./service/token_service');
 var loginAuth = require('./route/ui/admin/login');
 
@@ -153,6 +154,10 @@ uiRoutes.get('/admin/user/create', restrict, function(req, res) {
 
 uiRoutes.get('/admin/user/edit/:id', restrict, function(req, res) {
     userUiCreateEditRoute(req,res);
+});
+
+uiRoutes.get('/admin/user/edit/:id/roles', restrict, function(req, res) {
+    userUiEditRolesRoute(req, res);
 });
 
 app.use('/api', apiRoutes);

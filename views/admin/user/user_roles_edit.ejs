@@ -3,9 +3,11 @@
 <head>
     <% include ../../partials/head %>
     <style>
-        .margin-right-3px {margin-right: 5px}
-        .margin-right-10px {margin-right: 10px}
-        .bold-text {font-weight: bold}
+        .padded-top-10 {margin-top: 10px}
+        .padded-right {margin-right: 5px}
+        .padded-left-3 {margin-left: 3px}
+        .padded-right-5 {margin-right: 5px}
+        .pointer-cursor {cursor: pointer}
     </style>
 </head>
 <body class="container">
@@ -19,40 +21,39 @@
         <div class="card">
             <h3 class="card-header"><%= form.title %></h3>
             <div class="card-block">
-                <form id="form" enctype="application/json" action="/admin/user">
-                    <input name="id" value="<%- user.id %>" type="hidden" class="form-control" >
-                    <div class="form-group">
-                        <label for="fullName" >Full name</label>
-                        <input id="fullName" name="fullName" value="<%- user.fullName %>" type="text" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input id="email" name="email" value="<%- user.email %>" type="text" class="form-control" >
-                    </div>
-                    <div class="form-group">
-                        <label for="login">Login</label>
-                        <input id="login" name="login" value="<%- user.login %>" type="text" class="form-control" >
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input id="password" name="password" value="<%- user.password %>" type="password" class="form-control" >
-                    </div>
-                    <div class="form-group">
-                        <label >Orgs / Roles</label>
-                        <ul class="list-group">
-                            <% user.orgs.forEach(function(org) { %>
-                            <li class="list-group-item">
-                                <span class="margin-right-10px bold-text"><%= org.org_id %></span>
-                                <% org.roles.forEach(function(role) { %>
-                                <span class="badge badge-default margin-right-3px"><%= role %></span>
-                                <% }); %>
-                            </li>
-                            <% }); %>
-                        </ul>
-                    </div>
+                User: <strong><%= user.login %></strong>
+                <table class="table padded-top-10">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Application</th>
+                            <th>Roles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% user.orgs.forEach(function(org) { %>
+                        <tr>
+                            <td><%= org.org_id %></td>
+                            <td>
+                                <div class="row padded-full-10">
+                                    <div class="d-flex flex-row flex-wrap roles">
+                                        <% org.roles.forEach(function(role) { %>
+                                        <span class="badge badge-default text-right padded-right">
+                                            <%= role %>
+                                            <a class="removeRole padded-left-3 pointer-cursor">
+                                                <span class="fa fa-times-circle" aria-label="Remove"></span>
+                                            </a>
+                                        </span>
+                                        <% }); %>
 
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm padded-right-5 btnAddRole">+</button>
+                                    <button class="btn btn-danger btn-sm btnCancel">x</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -61,6 +62,43 @@
 <footer class="footer">
     <% include ../../partials/footer %>
     <script type="text/javascript">
+
+        function addRole() {
+            var newRoleInput = "<div class='roleValue'><input type='text' class='roleInput padded-right'/></div>";
+            $(this).siblings(".roles").append(newRoleInput);
+            $(this).siblings(".roles").find(".roleInput").focus();
+            $(this).hide();
+            $(this).siblings(".btnCancel").show();
+        }
+
+        function cancelRole() {
+            $(".roleInput").remove();
+            $(".btnAddRole").show();
+            $(".btnAddRole").focus();
+            $(".btnCancel").hide();
+        }
+
+        function saveRole(inputTarget) {
+            var inputValue = inputTarget.children("input[type=text]").val();
+            var label = '<span class="badge badge-default text-right padded-right">'+inputValue+'<a class="removeRole padded-left-3 pointer-cursor"><span class="fa fa-times-circle" aria-label="Remove"></span></a></span>';
+            inputTarget.html(label);
+            //We need to add the remove role event here since the badge is dynamically created
+            $('.badge').on('click', '.removeRole', function(event) {
+                $(this).parent().remove();
+                exportRoles();
+            });
+            $(".btnAddRole").show();
+            $(".btnAddRole").focus();
+            $(".btnCancel").hide();
+            exportRoles();
+        }
+
+        function exportRoles() {
+            var data = [];
+            $(".roles").find(".badge").each(function(index, badge) {
+                data.push(badge.innerText);
+            });
+        }
 
         $(document).ready(function() {
             $("#form").submit(function(event) {
@@ -86,6 +124,22 @@
                 console.log(config);
                 $.ajax(config);
                 event.preventDefault();
+            });
+
+            $(function(){
+                $(".btnCancel").hide();
+                $(".btnAddRole").bind("click", addRole);
+                $(".btnCancel").bind("click", cancelRole);
+                $('#roles').on('keypress', '.roleInput', function(event) {
+                    if (event.which == 13) {
+                        saveRole($(this).parent());
+                    }
+                });
+                $('#roles').on('keyup', '.roleInput', function(event) {
+                    if (event.keyCode == 27) {
+                        cancelRole();
+                    }
+                });
             });
         });
 
