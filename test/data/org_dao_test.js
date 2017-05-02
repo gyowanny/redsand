@@ -220,4 +220,28 @@ describe('Org Dao', function() {
         });
     });
 
+    it('should return all orgs excluding the given org', function(done) {
+        var org = createDefaultOrg();
+        var org1 = createDefaultOrg();
+        org1.org_id = "another_org";
+
+        db.init(config, function(err, connection) {
+            db.global.connection = connection;
+
+            instance.save([org, org1], function (err, result) {
+                expect(err).to.be.null;
+
+                instance.findOrgsExcluding([org], function(err, orgsFound) {
+                    expect(err).to.be.null;
+
+                    expect(orgsFound).to.not.be.null;
+                    expect(orgsFound).to.have.lengthOf(1);
+
+                    done();
+                });
+
+            });
+        });
+    });
+
 });

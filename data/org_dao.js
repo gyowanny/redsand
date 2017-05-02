@@ -99,6 +99,27 @@ module.exports = {
 
             cursor.toArray(callback);
         });
+    },
+
+    findOrgsExcluding: function(orgsToExclude, callback) {
+        var orgIdsToExclude = orgsToExclude.map(function(item, index) {
+           return item.org_id;
+        });
+
+        this.getAll(function(err, orgs) {
+            if (err) {
+                callback(err, null);
+                return;
+            }
+
+            var orgsFiltered = orgs.filter(function(item, index) {
+               return orgIdsToExclude.indexOf(item.org_id) == -1;
+            }).map(function(item, index) {
+                return item.org_id;
+            });
+
+            callback(null, orgsFiltered);
+        });
     }
 
 }

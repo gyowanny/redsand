@@ -100,7 +100,7 @@ describe('User Dao', function() {
             instance.save(user, function(err, result) {
                 expect(err).to.be.null;
 
-                return instance.loginExists('login').then(function(exists) {
+                return instance.loginExists('login', function(exists) {
                     expect(Boolean(exists)).to.be.true;
                     done();
                 });

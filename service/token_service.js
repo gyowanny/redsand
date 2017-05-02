@@ -30,6 +30,9 @@ module.exports = {
     },
 
     isValid: function(token, key) {
+        if (!token || !key) {
+            return false;
+        }
         return jsonWebToken.verify(token, key);
     }
 }
