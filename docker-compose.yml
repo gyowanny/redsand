@@ -1,3 +1,4 @@
+# This file should be used by the test suite only
 version: '2'
 services:
   rethink:
