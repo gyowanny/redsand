@@ -39,13 +39,13 @@
                     <% }); %>
                 </td>
                 <td>
-                    <a href="/ui/admin/user/edit/<%- appUser.id %>" class="btn btn-primary btn-sm">
+                    <a data-toggle="tooltip" data-placement="top" title="Edit" href="/ui/admin/user/edit/<%- appUser.id %>" class="btn btn-primary btn-sm">
                         <span class="fa fa-pencil-square-o" aria-label="Edit"></span>
                     </a>
-                    <a href="/ui/admin/user/edit/<%- appUser.id %>/roles" class="btn btn-primary btn-sm">
+                    <a data-toggle="tooltip" data-placement="top" title="Access Rights" href="/ui/admin/user/edit/<%- appUser.id %>/roles" class="btn btn-primary btn-sm">
                         <span class="fa fa fa-id-card" aria-label="Roles"></span>
                     </a>
-                    <a onclick="deleteOrg('<%- appUser.id %>')" href="#" class="btn btn-danger btn-sm">
+                    <a data-toggle="tooltip" data-placement="top" title="Delete" onclick="deleteOrg('<%- appUser.id %>')" href="#" class="btn btn-danger btn-sm">
                         <span class="fa fa-trash-o" aria-label="Remove"></span>
                     </a>
 

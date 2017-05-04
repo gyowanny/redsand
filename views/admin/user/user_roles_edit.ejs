@@ -19,32 +19,40 @@
 <main>
     <div class="container">
         <div class="card">
-            <h3 class="card-header"><%= form.title %></h3>
+            <div class="card-header">
+                <h3><%= form.title %></h3>
+                <ul class="nav nav-pills card-header-pills padded-top-10">
+                    <li class="nav-item">
+                        <button id="btnAddApp" class="btn btn-primary" >Add</button>
+                        <button id="btnSaveApp" class="btn btn-success">Save</button>
+                        <button id="btnReset" class="btn btn-warning" onclick="location.reload(true)">Reset</button>
+                    </li>
+                </ul>
+            </div>
             <div class="card-block">
                 User: <strong><%= user.login %></strong>
-                <table class="table padded-top-10">
+                <input id="userId" type="hidden" value="<%- user.id %>"/>
+                <table id="tableApps" class="table padded-top-10">
                     <thead class="thead-inverse">
                         <tr>
-                            <th>Application</th>
-                            <th>Roles</th>
+                            <th >Application</th>
+                            <th class="col-md-8">Roles</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% user.orgs.forEach(function(org) { %>
                         <tr>
-                            <td><%= org.org_id %></td>
-                            <td>
+                            <td class="orgId"><%= org.org_id %></td>
+                            <td class="orgRoles">
                                 <div class="row padded-full-10">
                                     <div class="d-flex flex-row flex-wrap roles">
                                         <% org.roles.forEach(function(role) { %>
-                                        <span class="badge badge-default text-right padded-right">
-                                            <%= role %>
+                                        <span class="badge badge-default text-right padded-right"><%- role %>
                                             <a class="removeRole padded-left-3 pointer-cursor">
                                                 <span class="fa fa-times-circle" aria-label="Remove"></span>
                                             </a>
                                         </span>
                                         <% }); %>
-
                                     </div>
                                     <button class="btn btn-primary btn-sm padded-right-5 btnAddRole">+</button>
                                     <button class="btn btn-danger btn-sm btnCancel">x</button>
@@ -63,16 +71,61 @@
     <% include ../../partials/footer %>
     <script type="text/javascript">
 
+        function addApp() {
+            var config = {
+                headers: {"x-access-token": getTokenFromSessionStorage()},
+                url: '/ui/admin/user/'+getUserId()+'/orgs',
+                type : 'get',
+                dataType : 'json',
+                encode: true,
+                success : function(result) {
+                    if (result.success === true) {
+                        createAppRow(result.message);
+                    }
+                },
+                error: function(xhr, resp, text) {
+                    alert(JSON.stringify(xhr.responseText).message);
+                }
+            };
+            $.ajax(config);
+        }
+
+        function getUserId() {
+            return $("#userId").val();
+        }
+
+        function createAppRow(remainingApps) {
+            var buttons = '<button class="btn btn-primary btn-sm padded-right-5 btnAddRole">+</button>'
+                    + '<button class="btn btn-danger btn-sm btnCancel">x</button>';
+            var options = "";
+            $.each(remainingApps, function(index, value) {
+               options += "<option value='"+value+"'>"+value+"</option>";
+            });
+            var selectOrg = '<select class="form-control orgSelect">'+options+'</select>';
+            var newTableRow = '<tr><td class="orgIdSelect">'+selectOrg+'</td><td class="orgRoles"><div class="row padded-full-10"><div class="d-flex flex-row flex-wrap roles"></div>'+buttons+'</div></td></tr>';
+            $("#tableApps tr:last").after(newTableRow);
+            $(".btnAddRole").show();
+            $(".btnAddRole").focus();
+            $("#tableApps tr:last").find(".btnCancel").hide();
+            $("#tableApps tr:last").find(".btnAddRole").on("click", addRole);
+            $("#tableApps tr:last").find(".btnCancel").on("click", closeClick);
+            setKeyListeners();
+        }
+
         function addRole() {
-            var newRoleInput = "<div class='roleValue'><input type='text' class='roleInput padded-right'/></div>";
+            var newRoleInput = "<div class='roleValue'><input type='text' class='roleInput padded-right'></div>";
             $(this).siblings(".roles").append(newRoleInput);
             $(this).siblings(".roles").find(".roleInput").focus();
             $(this).hide();
             $(this).siblings(".btnCancel").show();
         }
 
-        function cancelRole() {
-            $(".roleInput").remove();
+        function closeClick() {
+            $(this).siblings(".roles").find(".roleInput").remove();
+            resetButtons()
+        }
+
+        function resetButtons() {
             $(".btnAddRole").show();
             $(".btnAddRole").focus();
             $(".btnCancel").hide();
@@ -85,61 +138,84 @@
             //We need to add the remove role event here since the badge is dynamically created
             $('.badge').on('click', '.removeRole', function(event) {
                 $(this).parent().remove();
-                exportRoles();
             });
             $(".btnAddRole").show();
             $(".btnAddRole").focus();
             $(".btnCancel").hide();
-            exportRoles();
+            $(this).parent().find(".roleInput").remove();
         }
 
-        function exportRoles() {
-            var data = [];
-            $(".roles").find(".badge").each(function(index, badge) {
-                data.push(badge.innerText);
+        function setKeyListeners() {
+            $(".roles").on('keypress', '.roleInput', function(event) {
+                if (event.which == 13) {
+                    saveRole($(this).parent());
+                }
             });
+            $(".roles").on('keyup', '.roleInput', function(event) {
+                if (event.keyCode == 27) {
+                    $(this).parent().remove();
+                    resetButtons();
+                }
+            });
+        }
+
+        function getAppsRolesFromTable() {
+            var data = [];
+            var tableRows = $("#tableApps tr").toArray();
+            for(var i = 1; i < tableRows.length; i++) {
+                var orgSelect = $(tableRows[i]).children(".orgIdSelect").children(".orgSelect");
+                var orgId;
+                if (orgSelect.val()) {
+                    orgId = orgSelect.val();
+                } else {
+                    orgId = $(tableRows[i]).children(".orgId").text().trim();
+                }
+                var roles = [];
+                var badges = $(tableRows[i]).find(".badge").toArray();
+                for(var j = 0; j < badges.length; j++) {
+                    roles.push(badges[j].innerText.trim());
+                }
+                if (roles.length > 0) {
+                    data.push({org_id: orgId, roles: roles});
+                }
+            }
+            return data;
+        }
+
+        function save() {
+            var data = {data: getAppsRolesFromTable()};
+
+            var config = {
+                headers: {"x-access-token": getTokenFromSessionStorage()},
+                url: '/ui/admin/user/'+getUserId()+'/orgs',
+                type : "put",
+                contentType: "application/json",
+                dataType : 'json',
+                data : JSON.stringify(data),
+                encode: true,
+                success : function(result) {
+                    if (result.success === true) {
+                        location.reload(true);
+                    }
+                },
+                error: function(xhr, resp, text) {
+                    alert(JSON.stringify(xhr.responseText).message);
+                }
+            };
+            $.ajax(config);
         }
 
         $(document).ready(function() {
-            $("#form").submit(function(event) {
-                var data = convertFormToJSON($(this));
-                var formURL = $(this).attr("action");
-                var config = {
-                    headers: {"x-access-token": getTokenFromSessionStorage()},
-                    url: formURL + (data.id ? '/'+data.id : ''),
-                    type : data.id ? "put" : "post",
-                    dataType : 'json',
-                    data : data,
-                    encode: true,
-                    success : function(result) {
-                        console.log(result);
-                        if (result.success === true) {
-                            window.location = '/ui/admin/user';
-                        }
-                    },
-                    error: function(xhr, resp, text) {
-                        alert(JSON.stringify(xhr.responseText).message);
-                    }
-                };
-                console.log(config);
-                $.ajax(config);
-                event.preventDefault();
-            });
-
             $(function(){
+                $("#btnSaveApp").on("click", save);
+                $(".btnAddRole").on("click", addRole);
+                $(".btnCancel").on("click", closeClick);
+                $("#btnAddApp").bind("click", addApp);
+                $('.badge').on('click', '.removeRole', function(event) {
+                    $(this).parent().remove();
+                });
                 $(".btnCancel").hide();
-                $(".btnAddRole").bind("click", addRole);
-                $(".btnCancel").bind("click", cancelRole);
-                $('#roles').on('keypress', '.roleInput', function(event) {
-                    if (event.which == 13) {
-                        saveRole($(this).parent());
-                    }
-                });
-                $('#roles').on('keyup', '.roleInput', function(event) {
-                    if (event.keyCode == 27) {
-                        cancelRole();
-                    }
-                });
+                setKeyListeners();
             });
         });
 

@@ -15,7 +15,6 @@ var createResponseAsJson = function(isSuccess, message) {
 module.exports = function(req, res) {
     var user = req.body;
 
-
     userDao.loginExists(user.login, function(exists) {
 
         if (exists) {
