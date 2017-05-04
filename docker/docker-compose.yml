@@ -1,0 +1,18 @@
+version: '2'
+services:
+  rethinkdb:
+    build: rethinkdb
+    ports:
+     - "28015"
+    volumes:
+     - /data:/data
+    command: rethinkdb --bind all --data /data
+  app:
+    build: app
+    volumes:
+     - /app/folder:/app
+    command: npm start --production
+    depends_on:
+      - rethinkdb
+    ports:
+     - 3000:3000
