@@ -183,8 +183,10 @@ If you want to constribute or even make your own customizations you will need ju
 
 Story   |
 --------|
-Store user activity in a table |
-Add user password expiration policy |
-Add user password reset. Useful for app features like 'Forgot your password' |
+Store user activity in database. Make it configurable |
+Password expiration policy |
+Forgot your password feature. Reset password |
 User activation via email with a link. Make it capable to use email API services like Mailgun(https://www.npmjs.com/package/mailgun-js), Mailchimp. *Mental note:* Use queue for background processing https://rethinkdb.com/docs/publish-subscribe/javascript/ |
+Spike to use ExpressJS Passport to manage user identity |
+Give users the option to receive the token encrypted. Activate through configuration |
 
