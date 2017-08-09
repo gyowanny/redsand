@@ -188,5 +188,5 @@ Password expiration policy |
 Forgot your password feature. Reset password |
 User activation via email with a link. Make it capable to use email API services like Mailgun(https://www.npmjs.com/package/mailgun-js), Mailchimp. *Mental note:* Use queue for background processing https://rethinkdb.com/docs/publish-subscribe/javascript/ |
 Spike to use ExpressJS Passport to manage user identity |
-Give users the option to receive the token encrypted. Activate through configuration |
+Give users the option to receive the token encrypted. Activate it through configuration |
 
