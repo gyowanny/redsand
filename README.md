@@ -48,7 +48,7 @@ Another useful feature is the ability to share the same user among several appli
 
 This is the current structure:
 
-```json
+```javascript
 {
   "login":"asmith",
   "password":"<encrypted pwd>",
@@ -66,7 +66,7 @@ This is the current structure:
 Orgs or Organizations are meant to store some custom configurations like token expiration which we know that each application has it's own way to deal with session/token expiration. You can also deactivate an organization so that the users can't authenticate for it. 
 The current structure is like below:
 
-```json
+```javascript
 {
   "org_id": "org_id",
   "name": "Organization Name",
@@ -86,7 +86,7 @@ The request payload `auth` property value must be Base64 encoded using the Basic
 
   **Request body example**: 
   
-  ```json
+  ```javascript
   {
     "auth": "bG9naW46cGFzc3dvcmQ=",
     "org_id": "org_id"
@@ -95,7 +95,7 @@ The request payload `auth` property value must be Base64 encoded using the Basic
 
   **Successful response payload example**:
   
-  ```json
+  ```javascript
   {
   "success": true,
   "message": "AUTHORIZED",
@@ -106,7 +106,7 @@ The request payload `auth` property value must be Base64 encoded using the Basic
 
   **Unsuccessful response paylod example**:
 
-  ```json
+  ```javascript
   {
     "success":false,
     "message":"UNAUTHORIZED"
@@ -120,7 +120,7 @@ The request payload `auth` property value must be Base64 encoded using the Basic
 
     **Request body example**:
 
-    ```json
+    ```javascript
     {
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImNyZWF0ZV9kYXRlIjoiMjAxNy0wNC0xMFQyMzowMDoxMC4wMzNaIiwiZW1haWwiOiJ1c2VyQHVzZXIuY29tIiwiZnVsbE5hbWUiOiJmdWxsIG5hbWUyIiwibG9naW4iOiJsb2dpbiIsIm9yZ19pZCI6WyJvcmdfaWQiXSwicm9sZXMiOlsiUk9MRV8xIiwiUk9MRV8yIiwiUk9MRV8zIiwiUk9MRV80Il19LCJpYXQiOjE0OTE5OTM3MTksImV4cCI6MTQ5MjA4MDExOX0.Yz0bzanyADuHmWtu5l4ufVs57_6ScCWbTmFujSOcsuU"
     }
@@ -129,7 +129,7 @@ The request payload `auth` property value must be Base64 encoded using the Basic
 
     **Request body example**:
 
-    ```json
+    ```javascript
     {
       "user": {
          "login": "adam.smith",
