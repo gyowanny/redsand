@@ -52,7 +52,7 @@ This is the current structure:
 {
   "login":"asmith",
   "password":"<encrypted pwd>",
-  "email":"adam@smith.com',
+  "email":"adam@smith.com",
   "fullName":"Adam Smith",
   "roles":["ROLE_1","ROLE_2","ROLE_3","ROLE_4"],
   "org_id":["org_id1", "org_id2"],
